@@ -37,7 +37,7 @@
   /* ---------- En-tête, infos, coordonnées ---------- */
   $("#year").textContent = new Date().getFullYear();
   $("#topName").textContent = SITE.nom;
-  $("#topRole").innerHTML = (SITE.role || []).map(esc).join("<br>");
+  $("#topRole").textContent = (SITE.role || []).length ? ", " + SITE.role.join(", ") : "";
   $("#contactTexte").textContent = INFOS.contactTexte || "";
   if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, hidden: false });
 
@@ -353,12 +353,28 @@
     btn.disabled = true;
     say("Envoi en cours…");
     try {
-      const r = await fetch(SITE.formulaire, {
+      // Le message part vers un service d'envoi qui le transmet par mail :
+      // l'adresse de destination n'apparaît nulle part sur le site.
+      const cible = SITE.formulaire.trim();
+      let url, body;
+      if (cible.startsWith("fs:")) {
+        // FormSubmit : la destination est stockée encodée et n'est reconstituée qu'au moment de l'envoi
+        url = "https://formsubmit.co/ajax/" + atob(cible.slice(3)).split("").reverse().join("");
+        body = { name: nom, email, message, _subject: objet, _template: "box", _captcha: "false" };
+      } else if (cible.startsWith("http")) {
+        url = cible; // Formspree
+        body = { nom, email, objet, message, _subject: objet };
+      } else {
+        url = "https://api.web3forms.com/submit"; // clé Web3Forms
+        body = { access_key: cible, name: nom, email, subject: objet, message, from_name: "Portfolio — " + SITE.nom };
+      }
+      const r = await fetch(url, {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ nom, email, objet, message, _subject: objet }),
+        body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error(r.status);
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok || res.success === false || res.success === "false") throw new Error(r.status);
       form.reset();
       say("Merci ! Votre message a bien été envoyé.", "is-ok");
     } catch (err) {

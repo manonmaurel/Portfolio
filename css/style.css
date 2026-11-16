@@ -67,20 +67,29 @@ ul, ol { list-style: none; }
 .top {
   position: fixed; inset: 0 0 auto 0; z-index: 20;
   display: grid;
-  grid-template-columns: 4fr 4fr auto;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: start;
   gap: var(--pad);
   padding: var(--pad);
   background: linear-gradient(var(--bg) 55%, rgba(255,255,255,0));
   pointer-events: none;
+  font-size: 14px;
+  text-transform: none;
 }
 .top > * { pointer-events: auto; }
-.top__name { font-weight: 600; justify-self: start; transition: color .25s; }
-.top__name:hover { color: var(--red); }
-.top__role { color: var(--mute); }
+.top__id { justify-self: start; font-weight: 500; transition: color .25s; }
+.top__id:hover { color: var(--red); }
+.top__role { color: var(--mute); font-weight: 450; }
 .top__nav { color: var(--faint); font-weight: 500; }
 .top__nav a { color: var(--mute); transition: color .25s; }
 .top__nav a:hover { color: var(--red); }
 .top__nav a[aria-current="page"] { color: var(--ink); }
+.top__cta {
+  justify-self: end; font-weight: 500;
+  padding-bottom: 3px; border-bottom: 1px solid currentColor;
+  transition: color .25s;
+}
+.top__cta:hover, .top__cta[aria-current="page"] { color: var(--red); }
 
 /* ---------- Vues ---------- */
 .view { animation: fade .6s var(--ease) both; }
@@ -108,8 +117,8 @@ ul, ol { list-style: none; }
 @keyframes thread { from { transform: scaleX(0); } }
 .strip {
   height: 100%;
-  --h: clamp(150px, 27vh, 300px);
-  --h-on: clamp(190px, 37vh, 400px);
+  --h: clamp(170px, 33vh, 380px);
+  --h-on: clamp(220px, 46vh, 520px);
   position: relative;
   display: flex;
   align-items: center;
@@ -397,13 +406,13 @@ ul, ol { list-style: none; }
 
 /* ---------- Mobile ---------- */
 @media (max-width: 820px) {
-  :root { --top-h: 56px; }
-  .top { grid-template-columns: 1fr auto; }
-  .top__role, .top__mail { display: none; }
-  .top { align-items: start; }
-  .top__nav { text-align: right; font-size: 12.5px; }
+  :root { --top-h: 78px; }
+  .top { grid-template-columns: 1fr auto; row-gap: 8px; }
+  .top__role { display: none; }
+  .top__cta { grid-column: 2; grid-row: 1; }
+  .top__nav { grid-column: 1 / -1; grid-row: 2; }
 
-  .strip { --h: clamp(170px, 34vh, 320px); --h-on: clamp(170px, 34vh, 320px); gap: 4px; padding-inline: 8vw; perspective: 700px; }
+  .strip { --h: clamp(180px, 38vh, 360px); --h-on: clamp(180px, 38vh, 360px); gap: 4px; padding-inline: 8vw; perspective: 700px; }
   .tile__title, .tile__cat { opacity: 1; transform: none; overflow: hidden; text-overflow: ellipsis; }
   .tile__cap { width: 100%; overflow: hidden; }
   .strip.has-on .tile:not(.is-on) .tile__media img { filter: none; }
