@@ -17,7 +17,7 @@
       "Chacune de mes œuvres reflète mon évolution. Elles sont des fragments de ma personnalité et des étapes dans ma découverte d’une esthétique qui me correspond."
     ],
     "signature": "Le rouge, fil conducteur de mon univers, en est la pièce maîtresse : il traverse mes dessins et mon style vestimentaire, comme une signature que je suis enfin prête à affirmer.",
-    "contactTexte": "N’hésitez pas à me contacter, c’est l’occasion d’échanger — ou bien de collaborer !"
+    "contactTexte": "N’hésitez pas à me contacter, c’est l’occasion d’échanger — et de collaborer !"
   },
   "categories": [
     {
@@ -82,30 +82,6 @@
           "src": "dessin-02.webp",
           "w": 1559,
           "h": 2391,
-          "legende": ""
-        }
-      ]
-    },
-    {
-      "id": "cranes",
-      "titre": "Crânes",
-      "categorie": "creations",
-      "annee": "2018",
-      "medium": "Encre sur papier",
-      "aVenir": false,
-      "intro": "J’aime représenter la fragilité de la vie à travers la finesse de traits, rappelant la précarité de l’existence et la beauté de ce qui disparaît.",
-      "texte": [],
-      "images": [
-        {
-          "src": "dessin-03.webp",
-          "w": 1619,
-          "h": 2399,
-          "legende": "« Young and alive »"
-        },
-        {
-          "src": "dessin-04.webp",
-          "w": 1601,
-          "h": 2400,
           "legende": ""
         }
       ]
@@ -182,20 +158,19 @@
     }
   ],
   "parcours": {
-    "portrait": "",
     "accroche": "Ingénieure de formation, créative depuis toujours : j’unis l’esprit scientifique et le sens esthétique.",
     "reperes": [
       {
         "label": "Formation",
-        "valeur": "Ingénieure packaging & impression"
+        "valeur": "Ingénieure packaging & impression et Manager Mode & Luxe (IFM)"
       },
       {
         "label": "Aujourd’hui",
-        "valeur": "Mastère Management de la Mode et du Luxe"
+        "valeur": "Assistante freelance"
       },
       {
         "label": "Outils",
-        "valeur": "Photoshop, Illustrator"
+        "valeur": "Suite Adobe (Photoshop, Illustrator, InDesign), Pack Office, Notion, Canva"
       },
       {
         "label": "Disponibilité",
@@ -224,12 +199,12 @@
     ],
     "services": [
       {
-        "titre": "Design graphique",
-        "texte": "Créations visuelles et supports pour les marques, sur Photoshop et Illustrator."
+        "titre": "Gestion de projets et structuration",
+        "texte": "Optimiser les systèmes et assister les créateurs dans leurs tâches : de la création à la production. "
       },
       {
-        "titre": "Dessin & peinture",
-        "texte": "Illustrations à l’encre et peintures à l’huile, entre réalisme et symbolique."
+        "titre": "Design graphique",
+        "texte": "Créations visuelles et supports pour les marques, sur Photoshop, Illustrator, InDesign."
       },
       {
         "titre": "Photographie",
@@ -237,9 +212,10 @@
       },
       {
         "titre": "Packaging & impression",
-        "texte": "Mon regard d’ingénieure : penser l’objet imprimé jusqu’à sa fabrication."
+        "texte": "Penser l’objet imprimé jusqu’à sa fabrication."
       }
-    ]
+    ],
+    "portrait": ""
   },
   "textes": {
     "nav_index": "Index",
