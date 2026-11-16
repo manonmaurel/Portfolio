@@ -1,7 +1,10 @@
 {
   "site": {
     "nom": "Manon Maurel",
-    "role": ["Création & mode", "Disponible en freelance"],
+    "role": [
+      "Création & mode",
+      "Disponible en freelance"
+    ],
     "email": "manonmaurel@orange.fr",
     "telephone": "+33 6 51 05 31 30",
     "linkedin": "https://www.linkedin.com/in/manonmaurel",
@@ -17,13 +20,17 @@
       "Chacune de mes œuvres reflète mon évolution. Elles sont des fragments de ma personnalité et des étapes dans ma découverte d’une esthétique qui me correspond."
     ],
     "signature": "Le rouge, fil conducteur de mon univers, en est la pièce maîtresse : il traverse mes dessins et mon style vestimentaire, comme une signature que je suis enfin prête à affirmer.",
-    "savoirFaire": ["Design graphique", "Dessin & peinture", "Photographie", "Packaging & impression"],
-    "outils": ["Photoshop", "Illustrator"],
     "contactTexte": "N’hésitez pas à me contacter, c’est l’occasion d’échanger — ou bien de collaborer !"
   },
   "categories": [
-    { "id": "creations", "label": "créations" },
-    { "id": "ifm", "label": "projets ifm" }
+    {
+      "id": "creations",
+      "label": "créations"
+    },
+    {
+      "id": "ifm",
+      "label": "projets"
+    }
   ],
   "projets": [
     {
@@ -38,9 +45,24 @@
         "Je peins principalement avec de la peinture à l’huile — toujours avec du rouge, et parfois une touche de bleu Majorelle."
       ],
       "images": [
-        { "src": "peinture-balloon-heart.webp", "w": 1400, "h": 1382, "legende": "« Balloon heart » — août 2024" },
-        { "src": "peinture-boom.webp", "w": 1906, "h": 2399, "legende": "« Boom bleu majorelle » — décembre 2022" },
-        { "src": "photo-cadenas.webp", "w": 1350, "h": 2400, "legende": "" }
+        {
+          "src": "peinture-balloon-heart.webp",
+          "w": 1400,
+          "h": 1382,
+          "legende": "« Balloon heart » — août 2024"
+        },
+        {
+          "src": "peinture-boom.webp",
+          "w": 1906,
+          "h": 2399,
+          "legende": "« Boom bleu majorelle » — décembre 2022"
+        },
+        {
+          "src": "photo-cadenas.webp",
+          "w": 1350,
+          "h": 2400,
+          "legende": ""
+        }
       ]
     },
     {
@@ -53,8 +75,18 @@
       "intro": "Le réalisme est le style le plus présent dans mes créations, et notamment la représentation du corps humain.",
       "texte": [],
       "images": [
-        { "src": "dessin-01.webp", "w": 1393, "h": 2399, "legende": "" },
-        { "src": "dessin-02.webp", "w": 1559, "h": 2391, "legende": "" }
+        {
+          "src": "dessin-01.webp",
+          "w": 1393,
+          "h": 2399,
+          "legende": ""
+        },
+        {
+          "src": "dessin-02.webp",
+          "w": 1559,
+          "h": 2391,
+          "legende": ""
+        }
       ]
     },
     {
@@ -67,8 +99,18 @@
       "intro": "J’aime représenter la fragilité de la vie à travers la finesse de traits, rappelant la précarité de l’existence et la beauté de ce qui disparaît.",
       "texte": [],
       "images": [
-        { "src": "dessin-03.webp", "w": 1619, "h": 2399, "legende": "« Young and alive »" },
-        { "src": "dessin-04.webp", "w": 1601, "h": 2400, "legende": "" }
+        {
+          "src": "dessin-03.webp",
+          "w": 1619,
+          "h": 2399,
+          "legende": "« Young and alive »"
+        },
+        {
+          "src": "dessin-04.webp",
+          "w": 1601,
+          "h": 2400,
+          "legende": ""
+        }
       ]
     },
     {
@@ -81,12 +123,42 @@
       "intro": "Mes photos sont prises au cours de mes voyages. Ils sont ma plus grande source d’inspiration.",
       "texte": [],
       "images": [
-        { "src": "photo-antigua.webp", "w": 2400, "h": 1350, "legende": "Antigua, Guatemala" },
-        { "src": "photo-flores.webp", "w": 2399, "h": 1439, "legende": "Flores, Guatemala" },
-        { "src": "photo-desert.webp", "w": 1350, "h": 2400, "legende": "" },
-        { "src": "photo-voiture.webp", "w": 1350, "h": 2400, "legende": "" },
-        { "src": "photo-crepuscule.webp", "w": 1350, "h": 2400, "legende": "" },
-        { "src": "photo-mer.webp", "w": 2161, "h": 1216, "legende": "" }
+        {
+          "src": "photo-antigua.webp",
+          "w": 2400,
+          "h": 1350,
+          "legende": "Antigua, Guatemala"
+        },
+        {
+          "src": "photo-flores.webp",
+          "w": 2399,
+          "h": 1439,
+          "legende": "Flores, Guatemala"
+        },
+        {
+          "src": "photo-desert.webp",
+          "w": 1350,
+          "h": 2400,
+          "legende": ""
+        },
+        {
+          "src": "photo-voiture.webp",
+          "w": 1350,
+          "h": 2400,
+          "legende": ""
+        },
+        {
+          "src": "photo-crepuscule.webp",
+          "w": 1350,
+          "h": 2400,
+          "legende": ""
+        },
+        {
+          "src": "photo-mer.webp",
+          "w": 2161,
+          "h": 1216,
+          "legende": ""
+        }
       ]
     },
     {
@@ -111,5 +183,65 @@
       "texte": [],
       "images": []
     }
-  ]
+  ],
+  "parcours": {
+    "portrait": "",
+    "accroche": "Ingénieure de formation, créative depuis toujours : j’unis l’esprit scientifique et le sens esthétique.",
+    "reperes": [
+      {
+        "label": "Formation",
+        "valeur": "Ingénieure packaging & impression"
+      },
+      {
+        "label": "Aujourd’hui",
+        "valeur": "Mastère Management de la Mode et du Luxe"
+      },
+      {
+        "label": "Outils",
+        "valeur": "Photoshop, Illustrator"
+      },
+      {
+        "label": "Disponibilité",
+        "valeur": "Missions freelance"
+      }
+    ],
+    "etapes": [
+      {
+        "periode": "Depuis l’enfance",
+        "titre": "Dessin, peinture, photographie",
+        "lieu": "Pratique personnelle",
+        "texte": "Une créativité qui s’exprime depuis toujours, et un fil conducteur : le rouge."
+      },
+      {
+        "periode": "Formation",
+        "titre": "Diplôme d’ingénieure",
+        "lieu": "Spécialité packaging & impression",
+        "texte": "L’esprit scientifique, pour structurer les idées et les concrétiser."
+      },
+      {
+        "periode": "Aujourd’hui",
+        "titre": "Mastère Management de la Mode et du Luxe",
+        "lieu": "IFM",
+        "texte": "Unir les deux dimensions de ma personnalité : la créativité et la rigueur."
+      }
+    ],
+    "services": [
+      {
+        "titre": "Design graphique",
+        "texte": "Créations visuelles et supports pour les marques, sur Photoshop et Illustrator."
+      },
+      {
+        "titre": "Dessin & peinture",
+        "texte": "Illustrations à l’encre et peintures à l’huile, entre réalisme et symbolique."
+      },
+      {
+        "titre": "Photographie",
+        "texte": "Un regard nourri par le voyage, la couleur et la lumière."
+      },
+      {
+        "titre": "Packaging & impression",
+        "texte": "Mon regard d’ingénieure : penser l’objet imprimé jusqu’à sa fabrication."
+      }
+    ]
+  }
 }

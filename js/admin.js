@@ -45,7 +45,7 @@
     if (r.status === 404 && opts.allow404) return null;
     if (!r.ok) {
       const err = new Error(
-        r.status === 401 ? "Clé d’accès refusée ou expirée (voir Réglages)."
+        r.status === 401 ? "Clé d’accès refusée ou expirée."
         : r.status === 403 || r.status === 404 ? "Accès refusé : vérifiez que la clé a le droit « Contents : Read and write » sur ce dépôt."
         : r.status === 409 || r.status === 422 ? "Le site a été modifié ailleurs entre-temps. Rechargez la page puis recommencez."
         : "Erreur GitHub " + r.status
@@ -96,19 +96,48 @@
   let dirty = false;
   const touch = () => { dirty = true; $("#bar").classList.add("is-dirty"); };
 
+  /* ---------- Verrou : l'espace ne s'ouvre qu'avec une clé que GitHub accepte en écriture ---------- */
+  const check = async () => {
+    branch = "";
+    const r = await gh("");
+    if (r.permissions && r.permissions.push === false) throw new Error("Cette clé n’a pas le droit de modifier le site.");
+    return r;
+  };
+  const gateMsg = (m) => ($("#gate-msg").textContent = m);
+  let unlocked = false;
+  if (cfg.token) {
+    try { await check(); unlocked = true; } catch (e) { gateMsg(e.status ? e.message : "Connexion à GitHub impossible. Réessayez."); }
+  }
+  if (!unlocked)
+    await new Promise((done) => {
+      $("#gate-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        cfg.token = $("#g-token").value.trim();
+        gateMsg("Vérification…");
+        try {
+          await check();
+          store.set("token", cfg.token);
+          done();
+        } catch (err) {
+          cfg.token = "";
+          gateMsg(err.status ? err.message : "Connexion à GitHub impossible. Réessayez.");
+        }
+      });
+    });
+  document.body.classList.remove("is-locked");
+
   const load = async () => {
-    if (cfg.token) {
-      try {
-        const f = await getFile(CONTENT);
-        if (f && f.content) return JSON.parse(b64ToUtf8(f.content));
-      } catch (e) { say(e.message, "is-bad"); }
-    }
+    try {
+      const f = await getFile(CONTENT);
+      if (f && f.content) return JSON.parse(b64ToUtf8(f.content));
+    } catch (e) { say(e.message, "is-bad"); }
     const r = await fetch(CONTENT, { cache: "no-store" });
     return r.json();
   };
   try { data = await load(); } catch (e) { say("Impossible de charger le contenu du site.", "is-bad"); return; }
   data.projets = data.projets || [];
   data.infos = data.infos || {};
+  data.parcours = Object.assign({ accroche: "", reperes: [], etapes: [], services: [] }, data.parcours);
 
   const thumb = (src) => previews.get(small(src)) || IMG + small(src);
 
@@ -304,16 +333,14 @@
       field("Nom", "site.nom") +
       field("En-tête (une ligne par ligne)", "site.role", { kind: "lines", rows: 2 }) +
       field("Adresse mail", "site.email", { type: "email" }) +
-      field("Téléphone", "site.telephone", { hint: "Laissez vide pour ne pas l’afficher." }) +
-      field("Lien LinkedIn", "site.linkedin", { type: "url" }) +
+      field("Téléphone", "site.telephone", { hint: "Visible seulement après un clic sur « autres coordonnées ». Vide : jamais affiché." }) +
+      field("Lien LinkedIn", "site.linkedin", { type: "url", hint: "Même principe que le téléphone." }) +
       field("Texte du lien LinkedIn", "site.linkedinLabel") +
       `</div>` +
       `<h3>Page « Infos »</h3><p>Votre présentation.</p><div class="grid">` +
       field("Accroche (en grand)", "infos.accroche", { kind: "area", wide: true }) +
       field("Paragraphes", "infos.paragraphes", { kind: "paras", wide: true, rows: 9, hint: "Laissez une ligne vide entre deux paragraphes." }) +
       field("Phrase finale (en rouge)", "infos.signature", { kind: "area", wide: true }) +
-      field("Savoir-faire (un par ligne)", "infos.savoirFaire", { kind: "lines", rows: 5 }) +
-      field("Outils (un par ligne)", "infos.outils", { kind: "lines", rows: 5 }) +
       `</div>` +
       `<h3>Page « Contact »</h3><p>Le formulaire pour vous écrire.</p><div class="grid">` +
       field("Texte d’invitation", "infos.contactTexte", { kind: "area", wide: true, rows: 2 }) +
@@ -324,11 +351,61 @@
       `</div>`;
   };
 
+  /* ---------- Onglet Parcours ---------- */
+  const listEditor = (path, cols, addLabel) =>
+    (getPath(path) || [])
+      .map(
+        (it, i) =>
+          `<div class="rep-item"><div class="grid">${cols.map((c) => field(c.label, `${path}.${i}.${c.key}`, c.o || {})).join("")}</div>` +
+          `<div class="im__row"><span class="mono">(${i + 1})</span>` +
+          `<button class="ico" data-lact="up" data-lpath="${path}" data-i="${i}" title="Monter" aria-label="Monter">↑</button>` +
+          `<button class="ico" data-lact="down" data-lpath="${path}" data-i="${i}" title="Descendre" aria-label="Descendre">↓</button>` +
+          `<button class="ico" data-lact="del" data-lpath="${path}" data-i="${i}" title="Retirer" aria-label="Retirer">✕</button></div></div>`
+      )
+      .join("") +
+    `<button class="btn btn--small" data-lact="add" data-lpath="${path}" data-keys="${cols.map((c) => c.key).join(",")}">+ ${addLabel}</button>`;
+  const renderParcours = () => {
+    $("#tab-parcours").innerHTML =
+      `<h2>Parcours</h2><p class="sub">Votre page de présentation, façon CV.</p>` +
+      `<div class="grid">${field("Accroche (en grand)", "parcours.accroche", { kind: "area", wide: true })}</div>` +
+      `<h3>Repères</h3><p>Quelques informations clés, en un coup d’œil.</p>` +
+      listEditor("parcours.reperes", [{ key: "label", label: "Intitulé" }, { key: "valeur", label: "Valeur" }], "Ajouter un repère") +
+      `<h3>Le fil — formations et expériences</h3><p>Dans l’ordre d’affichage, de haut en bas.</p>` +
+      listEditor(
+        "parcours.etapes",
+        [
+          { key: "periode", label: "Période", o: { placeholder: "Ex. : 2024 — 2025" } },
+          { key: "titre", label: "Titre", o: { placeholder: "Ex. : Assistante chef de produit" } },
+          { key: "lieu", label: "Lieu / entreprise / école", o: { wide: true } },
+          { key: "texte", label: "Description", o: { kind: "area", wide: true, rows: 2 } },
+        ],
+        "Ajouter une étape"
+      ) +
+      `<h3>Ce que je peux vous apporter</h3><p>Vos services, pour vos futurs clients.</p>` +
+      listEditor(
+        "parcours.services",
+        [{ key: "titre", label: "Titre", o: { wide: true } }, { key: "texte", label: "Description", o: { kind: "area", wide: true, rows: 2 } }],
+        "Ajouter un service"
+      );
+  };
+  $("#tab-parcours").addEventListener("click", (e) => {
+    const b = e.target.closest("[data-lact]");
+    if (!b) return;
+    const arr = getPath(b.dataset.lpath);
+    const i = +b.dataset.i;
+    if (b.dataset.lact === "add") arr.push(Object.fromEntries(b.dataset.keys.split(",").map((k) => [k, ""])));
+    else if (b.dataset.lact === "del") arr.splice(i, 1);
+    else if (!move(arr, i, b.dataset.lact === "up" ? -1 : 1)) return;
+    touch();
+    renderParcours();
+  });
+
   /* ---------- Onglets ---------- */
   $$(".tabs button").forEach((b) =>
     b.addEventListener("click", () => {
       $$(".tabs button").forEach((x) => x.setAttribute("aria-selected", String(x === b)));
-      ["projets", "infos", "reglages"].forEach((t) => ($("#tab-" + t).hidden = t !== b.dataset.tab));
+      ["projets", "infos", "parcours", "reglages"].forEach((t) => ($("#tab-" + t).hidden = t !== b.dataset.tab));
+      if (b.dataset.tab === "parcours") renderParcours();
       if (b.dataset.tab === "infos") renderInfos();
       if (b.dataset.tab === "projets") renderProjets();
     })
@@ -354,6 +431,12 @@
       if (r.permissions && r.permissions.push === false) throw new Error("La clé fonctionne mais n’a pas le droit d’écrire (Contents : Read and write).");
       say(`Connexion réussie au dépôt ${r.full_name} (branche ${await getBranch()}).`, "is-ok");
     } catch (e) { say(e.message, "is-bad"); }
+  });
+  $("#s-logout").addEventListener("click", () => {
+    if (dirty && !confirm("Des modifications ne sont pas publiées. Se déconnecter quand même ?")) return;
+    dirty = false;
+    store.set("token", "");
+    location.reload();
   });
   $("#s-export").addEventListener("click", () => {
     const a = document.createElement("a");
@@ -403,5 +486,4 @@
   window.addEventListener("beforeunload", (e) => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
 
   renderProjets();
-  if (!cfg.token) say("Première visite ? Ouvrez « Réglages » pour activer le bouton Publier.");
 })();

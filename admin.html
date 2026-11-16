@@ -8,14 +8,14 @@
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c8201f'/%3E%3C/svg%3E">
   <style>
     @font-face { font-family: "Outfit"; src: url("assets/fonts/outfit-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
-    @font-face { font-family: "DM Mono"; src: url("assets/fonts/dm-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
     :root { --ink: #0b0b0b; --mute: #8a8a8a; --faint: #dcdcdc; --line: #ececec; --soft: #f6f6f6; --red: #c8201f; --ok: #1d7a46; }
     *, *::before, *::after { box-sizing: border-box; }
     body { margin: 0; font-family: "Outfit", Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 350; line-height: 1.45; color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
     h1, h2, h3, p, ul, ol { margin: 0; padding: 0; } ul, ol { list-style: none; }
     a { color: inherit; }
     button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; }
-    .mono { font-family: "DM Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .02em; text-transform: uppercase; }
+    .mono { font-size: 13px; font-weight: 450; text-transform: lowercase; }
+    #status { text-transform: none; }
     .mute { color: var(--mute); }
 
     .bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 18px; padding: 12px 22px; background: #fff; border-bottom: 1px solid var(--ink); }
@@ -79,8 +79,17 @@
     .steps li { counter-increment: s; padding-left: 34px; position: relative; }
     .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-size: .8rem; display: grid; place-items: center; }
     .note { background: var(--soft); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; }
-    code { font-family: "DM Mono", monospace; font-size: .88em; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+    code { font-family: ui-monospace, Menlo, monospace; font-size: .88em; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
     [hidden] { display: none !important; }
+    .is-locked > *:not(#gate) { display: none !important; }
+    body:not(.is-locked) > #gate { display: none; }
+    #gate { max-width: 620px; margin: 0 auto; padding: clamp(40px, 10vh, 110px) 22px; }
+    #gate h1 { font-size: 2.4rem; font-weight: 600; letter-spacing: -.03em; line-height: 1; margin-bottom: 10px; }
+    #gate h1 i { color: var(--red); font-style: normal; }
+    #gate details { margin: 22px 0; } #gate summary { cursor: pointer; color: var(--mute); }
+    #gate-msg { min-height: 1.4em; margin-top: 12px; color: var(--red); }
+    .rep-item { border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+    .rep-item .im__row { margin-top: 10px; }
 
     @media (max-width: 760px) {
       .bar { flex-wrap: wrap; gap: 10px; padding: 10px 14px; }
@@ -90,12 +99,33 @@
     }
   </style>
 </head>
-<body>
+<body class="is-locked">
+  <section id="gate">
+    <h1>Espace privé<i>.</i></h1>
+    <p class="mute">Cette page est réservée à la propriétaire du site. Entrez votre clé d’accès GitHub pour l’ouvrir.</p>
+    <form id="gate-form" style="margin-top:26px;display:grid;gap:14px">
+      <label class="f"><span class="mono">Clé d’accès</span><input type="password" id="g-token" autocomplete="current-password" placeholder="github_pat_…" required></label>
+      <div><button class="btn btn--main" type="submit">Ouvrir l’administration</button></div>
+      <p id="gate-msg" role="status"></p>
+    </form>
+    <details>
+      <summary>Première fois ? Comment créer ma clé d’accès</summary>
+      <ol class="steps">
+        <li>Ouvrez <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens → Generate new token</a> (connectée à votre compte GitHub).</li>
+        <li>Nom : <code>Portfolio admin</code>. Expiration : celle de votre choix (1 an par exemple).</li>
+        <li>« Repository access » → <b>Only select repositories</b> → choisissez le dépôt du portfolio.</li>
+        <li>« Permissions » → Repository permissions → <b>Contents : Read and write</b>.</li>
+        <li>Cliquez sur « Generate token », copiez la clé (elle commence par <code>github_pat_</code>) et collez-la ci-dessus.</li>
+      </ol>
+      <p class="mute">La clé est vérifiée par GitHub et reste dans ce navigateur. Sans elle, personne ne peut ouvrir cet espace ni modifier le site.</p>
+    </details>
+  </section>
   <header class="bar" id="bar">
     <h1>Administration <span class="mute">— portfolio</span></h1>
     <nav class="tabs" role="tablist">
       <button role="tab" data-tab="projets" aria-selected="true">Projets</button>
       <button role="tab" data-tab="infos" aria-selected="false">Infos &amp; contact</button>
+      <button role="tab" data-tab="parcours" aria-selected="false">Parcours</button>
       <button role="tab" data-tab="reglages" aria-selected="false">Réglages</button>
     </nav>
     <a class="btn btn--small" href="./" target="_blank" rel="noopener">Voir le site ↗</a>
@@ -115,18 +145,11 @@
   </div>
 
   <section class="main" id="tab-infos" hidden></section>
+  <section class="main" id="tab-parcours" hidden></section>
 
   <section class="main" id="tab-reglages" hidden>
     <h2>Réglages</h2>
-    <p class="sub">À faire une seule fois, pour que le bouton « Publier » puisse mettre le site à jour.</p>
-    <div class="note">Le site est rangé sur GitHub. Pour y enregistrer vos modifications, cette page a besoin d’une clé d’accès personnelle. Elle reste dans ce navigateur uniquement et ne donne accès qu’à ce site.</div>
-    <ol class="steps">
-      <li>Ouvrez <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens → Generate new token</a> (connectée à votre compte GitHub).</li>
-      <li>Nom : <code>Portfolio admin</code>. Expiration : celle de votre choix (1 an par exemple).</li>
-      <li>« Repository access » → <b>Only select repositories</b> → choisissez le dépôt du portfolio.</li>
-      <li>« Permissions » → Repository permissions → <b>Contents : Read and write</b>.</li>
-      <li>Cliquez sur « Generate token », copiez la clé (elle commence par <code>github_pat_</code>) et collez-la ci-dessous.</li>
-    </ol>
+    <p class="sub">Où le site est enregistré. En général, rien à changer ici.</p>
     <div class="grid">
       <label class="f f--wide"><span class="mono">Clé d’accès GitHub</span><input type="password" id="s-token" autocomplete="off" placeholder="github_pat_…"></label>
       <label class="f"><span class="mono">Compte GitHub</span><input type="text" id="s-owner"></label>
@@ -136,6 +159,7 @@
     <div class="foot" style="display:flex;gap:10px;flex-wrap:wrap">
       <button class="btn btn--main" id="s-save">Enregistrer et tester</button>
       <button class="btn" id="s-export">Télécharger le contenu (.json)</button>
+      <button class="btn btn--danger" id="s-logout">Se déconnecter de ce navigateur</button>
     </div>
   </section>
 

@@ -4,14 +4,14 @@ Site statique (HTML / CSS / JavaScript, sans dépendance ni étape de build).
 
 ## Modifier le site sans toucher au code
 
-Ouvrir **`/admin.html`** (à la suite de l'adresse du site). On peut y :
+Ouvrir **`/admin.html`** (à la suite de l'adresse du site). La page est verrouillée : elle ne s'ouvre
+qu'avec une clé d'accès GitHub ayant le droit d'écrire dans ce dépôt (la marche à suivre est indiquée sur l'écran de connexion). On peut y :
 
 - ajouter, modifier, réordonner ou supprimer des projets ;
 - ajouter des images (redimensionnées automatiquement), les légender et les réordonner ;
-- modifier les textes des pages « Infos » et « Contact » et les coordonnées.
+- modifier les textes des pages « À propos », « Parcours » et « Contact » et les coordonnées.
 
 Le bouton **Publier** enregistre les changements sur GitHub ; le site se met à jour en une à deux minutes.
-La première fois, l'onglet **Réglages** explique comment créer la clé d'accès GitHub nécessaire (une seule fois par navigateur).
 
 ## Organisation des fichiers
 

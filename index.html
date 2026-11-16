@@ -11,7 +11,6 @@
   <meta name="theme-color" content="#ffffff">
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c8201f'/%3E%3C/svg%3E">
   <link rel="preload" href="assets/fonts/outfit-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="assets/fonts/dm-mono-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body data-view="index">
@@ -20,15 +19,14 @@
     <a class="top__name" href="#/" id="topName">Manon Maurel</a>
     <p class="top__role" id="topRole"></p>
     <nav class="top__nav" aria-label="Navigation principale">
-      <a href="#/" data-nav="index">Index</a> / <a href="#/liste" data-nav="liste">Liste</a> / <a href="#/infos" data-nav="infos">Infos</a> / <a href="#/contact" data-nav="contact">Contact</a>
+      <a href="#/" data-nav="index">index</a>, <a href="#/liste" data-nav="liste">liste</a>, <a href="#/infos" data-nav="infos">à propos</a>, <a href="#/parcours" data-nav="parcours">parcours</a>, <a href="#/contact" data-nav="contact">contact</a>
     </nav>
-    <a class="top__mail" id="topMail" href="#/contact"></a>
   </header>
 
   <!-- INDEX : ligne incurvée d'images à faire défiler -->
   <main class="view view--index" id="view-index" data-view="index">
     <h1 class="sr-only">Manon Maurel — portfolio</h1>
-    <div class="strip" id="strip" tabindex="0" aria-label="Galerie des projets, défilement horizontal"></div>
+    <div class="stage"><div class="strip" id="strip" tabindex="0" aria-label="Galerie des projets, défilement horizontal"></div></div>
     <footer class="bottom">
       <span class="bottom__copy">©<span id="year"></span></span>
       <div class="filters" id="filters" role="group" aria-label="Filtrer les projets"></div>
@@ -39,7 +37,7 @@
   <!-- LISTE -->
   <main class="view view--page" id="view-liste" data-view="liste" hidden>
     <div class="page-head">
-      <h1 class="display">Liste</h1>
+      <h1 class="display">Liste<i class="dotr">.</i></h1>
       <p class="mono page-head__note" id="listCount"></p>
     </div>
     <ol class="list" id="list"></ol>
@@ -49,10 +47,21 @@
   <main class="view view--page" id="view-infos" data-view="infos" hidden>
     <div class="infos">
       <div class="infos__col infos__col--title">
-        <h1 class="display">À propos</h1>
+        <h1 class="display">À propos<i class="dotr">.</i></h1>
         <figure class="infos__portrait" id="portrait"></figure>
       </div>
       <div class="infos__col infos__col--text" id="infosText"></div>
+    </div>
+  </main>
+
+  <!-- PARCOURS -->
+  <main class="view view--page" id="view-parcours" data-view="parcours" hidden>
+    <div class="cv">
+      <div class="cv__side">
+        <h1 class="display">Parcours<i class="dotr">.</i></h1>
+        <figure class="cv__portrait" id="cvPortrait"></figure>
+      </div>
+      <div class="cv__main" id="cvMain"></div>
     </div>
   </main>
 
@@ -60,13 +69,13 @@
   <main class="view view--page" id="view-contact" data-view="contact" hidden>
     <div class="contact">
       <div class="contact__side">
-        <h1 class="display">Écrivez-moi</h1>
+        <h1 class="display">Écrivez-moi<i class="dotr">.</i></h1>
         <p class="contact__lead" id="contactTexte"></p>
         <ul class="contact__links">
           <li><span class="mono label">Adresse mail</span><a id="cMail" href="#"></a></li>
-          <li><span class="mono label">Téléphone</span><a id="cTel" href="#"></a></li>
-          <li><span class="mono label">LinkedIn</span><a id="cIn" href="#" target="_blank" rel="noopener"></a></li>
         </ul>
+        <button type="button" class="more" id="more" aria-expanded="false" aria-controls="extra" hidden><i>+</i> autres coordonnées</button>
+        <div class="contact__extra" id="extra"><div><ul class="contact__links" id="extraList"></ul></div></div>
       </div>
       <form class="form" id="contactForm" novalidate>
         <label class="field">

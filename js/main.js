@@ -38,27 +38,71 @@
   $("#year").textContent = new Date().getFullYear();
   $("#topName").textContent = SITE.nom;
   $("#topRole").innerHTML = (SITE.role || []).map(esc).join("<br>");
-  $("#topMail").textContent = SITE.email;
   const mailto = "mailto:" + SITE.email;
   Object.assign($("#cMail"), { href: mailto, textContent: SITE.email });
-  if (SITE.telephone) Object.assign($("#cTel"), { href: "tel:" + SITE.telephone.replace(/\s/g, ""), textContent: SITE.telephone });
-  else $("#cTel").closest("li").remove();
-  if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, textContent: SITE.linkedinLabel || "LinkedIn" });
-  else $("#cIn").closest("li").remove();
   $("#contactTexte").textContent = INFOS.contactTexte || "";
+
+  // Téléphone et LinkedIn : masqués, accessibles par un bouton discret
+  const extras = [];
+  if (SITE.telephone) extras.push(["Téléphone", "tel:" + SITE.telephone.replace(/\s/g, ""), SITE.telephone, ""]);
+  if (SITE.linkedin) extras.push(["LinkedIn", SITE.linkedin, SITE.linkedinLabel || "LinkedIn", ' target="_blank" rel="noopener"']);
+  if (extras.length) {
+    const more = $("#more");
+    more.hidden = false;
+    more.addEventListener("click", () => {
+      const open = more.getAttribute("aria-expanded") !== "true";
+      more.setAttribute("aria-expanded", String(open));
+      $("#extra").classList.toggle("is-open", open);
+      // les coordonnées ne sont écrites dans la page qu'à la demande
+      $("#extraList").innerHTML = open
+        ? extras.map(([l, h, t, x]) => `<li><span class="mono label">${l}</span><a href="${esc(h)}"${x}>${esc(t)}</a></li>`).join("")
+        : "";
+    });
+  }
 
   if (INFOS.portrait)
     $("#portrait").innerHTML = `<img src="${IMG}${esc(INFOS.portrait)}" alt="Portrait de ${esc(SITE.nom)}" loading="lazy">`;
-  const liste = (titre, items) =>
-    items && items.length
-      ? `<section><h2 class="mono label">${titre}</h2><ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></section>`
-      : "";
+  const cta = (label, titre, href) =>
+    `<a class="infos__cta" href="${href}"><span class="mono label">${label}</span><span class="display">${titre} <i class="dotr">→</i></span></a>`;
   $("#infosText").innerHTML =
     (INFOS.accroche ? `<p class="lead">${esc(INFOS.accroche)}</p>` : "") +
     (INFOS.paragraphes || []).map((p) => `<p>${esc(p)}</p>`).join("") +
     (INFOS.signature ? `<p class="accent">${esc(INFOS.signature)}</p>` : "") +
-    `<div class="infos__grid">${liste("Savoir-faire", INFOS.savoirFaire)}${liste("Outils", INFOS.outils)}</div>` +
-    `<a class="infos__cta" href="#/contact"><span class="mono label">Contact</span><span class="display">Écrivez-moi →</span></a>`;
+    cta("Mon parcours", "Parcours", "#/parcours") +
+    cta("Contact", "Écrivez-moi", "#/contact");
+
+  /* ---------- PARCOURS ---------- */
+  const CV = DATA.parcours || {};
+  if (CV.portrait)
+    $("#cvPortrait").innerHTML = `<img src="${IMG}${esc(CV.portrait)}" alt="${esc(SITE.nom)}" loading="lazy">`;
+  $("#cvMain").innerHTML =
+    (CV.accroche ? `<p class="lead">${esc(CV.accroche)}</p>` : "") +
+    ((CV.reperes || []).length
+      ? `<dl class="rep">${CV.reperes.map((r) => `<div><dt>${esc(r.label)}</dt><dd>${esc(r.valeur)}</dd></div>`).join("")}</dl>`
+      : "") +
+    ((CV.etapes || []).length
+      ? `<h2 class="mono label">Le fil</h2><ol class="thread">` +
+        CV.etapes
+          .map(
+            (e) =>
+              `<li class="step">` +
+              (e.periode ? `<p class="step__when">${esc(e.periode)}</p>` : "") +
+              `<h3 class="step__title">${esc(e.titre)}</h3>` +
+              (e.lieu ? `<p class="step__where">${esc(e.lieu)}</p>` : "") +
+              (e.texte ? `<p class="step__text">${esc(e.texte)}</p>` : "") +
+              `</li>`
+          )
+          .join("") +
+        `</ol>`
+      : "") +
+    ((CV.services || []).length
+      ? `<h2 class="mono label">Ce que je peux vous apporter</h2><ol class="services">` +
+        CV.services
+          .map((x, i) => `<li class="service"><span class="service__n">${pad(i + 1)}</span><h3 class="service__title">${esc(x.titre)}</h3><p>${esc(x.texte)}</p></li>`)
+          .join("") +
+        `</ol>`
+      : "") +
+    cta("Disponible en freelance", "Travaillons ensemble", "#/contact");
 
   /* ---------- INDEX : ligne d'images ---------- */
   const strip = $("#strip");
@@ -76,7 +120,7 @@
       a.draggable = false;
       a.setAttribute("aria-label", `${p.titre} — voir le projet`);
       a.innerHTML =
-        `<span class="tile__cap"><span class="tile__num">${pad(n)}.</span>` +
+        `<span class="tile__cap"><span class="tile__num">${pad(n)}<i class="dotr">.</i></span>` +
         `<span class="tile__title">${esc(p.titre)}</span>` +
         `<span class="tile__cat">[${esc(catLabel(p.categorie))}]</span></span>` +
         `<span class="tile__media">` +
@@ -198,7 +242,7 @@
     b.dataset.cat = c.id;
     b.setAttribute("aria-pressed", String(c.id === "tout"));
     filters.appendChild(b);
-    if (i < CATS.length - 1) filters.appendChild(el("span", "sep", ", "));
+    filters.appendChild(i < CATS.length - 1 ? el("span", "sep", ", ") : el("i", "dotr", "."));
   });
   filters.addEventListener("click", (e) => {
     const b = e.target.closest("button");
@@ -280,7 +324,7 @@
       `<div class="project__side">` +
       `<a class="project__back mono" href="#/">← Index</a>` +
       `<p class="mono">P${pad(idx + 1, 3)} / ${pad(PROJETS.length, 3)}</p>` +
-      `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}</h1>` +
+      `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}<i class="dotr">.</i></h1>` +
       `<dl class="project__meta mono">` +
       `<dt>Catégorie</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
       (p.annee ? `<dt>Année</dt><dd>${esc(p.annee)}</dd>` : "") +
@@ -291,7 +335,7 @@
       `</div>` +
       `<div class="project__media">${media}</div>` +
       `<a class="project__next" href="#/projet/${next.id}"><span class="mono label">Projet suivant</span>` +
-      `<span class="display">${esc(next.titre)} →</span></a>`;
+      `<span class="display">${esc(next.titre)} <i class="dotr">→</i></span></a>`;
 
     $$(".reveal", projectEl).forEach((r) => (io ? io.observe(r) : r.classList.add("is-in")));
     document.title = `${p.titre} — ${SITE.nom}`;
@@ -359,7 +403,7 @@
     if (view === "projet") {
       proj = PROJETS.find((p) => p.id === parts[1]);
       if (!proj) view = "index";
-    } else if (!["index", "liste", "infos", "contact"].includes(view)) view = "index";
+    } else if (!["index", "liste", "infos", "parcours", "contact"].includes(view)) view = "index";
 
     if (document.body.dataset.view === "index") stripLeft = strip.scrollLeft;
     if (proj) renderProject(proj);
