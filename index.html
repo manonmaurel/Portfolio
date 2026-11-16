@@ -37,7 +37,7 @@
   <!-- LISTE -->
   <main class="view view--page" id="view-liste" data-view="liste" hidden>
     <div class="page-head">
-      <h1 class="display">Liste<i class="dotr">.</i></h1>
+      <h1 class="display">Liste</h1>
       <p class="mono page-head__note" id="listCount"></p>
     </div>
     <ol class="list" id="list"></ol>
@@ -47,7 +47,7 @@
   <main class="view view--page" id="view-infos" data-view="infos" hidden>
     <div class="infos">
       <div class="infos__col infos__col--title">
-        <h1 class="display">À propos<i class="dotr">.</i></h1>
+        <h1 class="display">À propos</h1>
         <figure class="infos__portrait" id="portrait"></figure>
       </div>
       <div class="infos__col infos__col--text" id="infosText"></div>
@@ -58,7 +58,7 @@
   <main class="view view--page" id="view-parcours" data-view="parcours" hidden>
     <div class="cv">
       <div class="cv__side">
-        <h1 class="display">Parcours<i class="dotr">.</i></h1>
+        <h1 class="display">Parcours</h1>
         <figure class="cv__portrait" id="cvPortrait"></figure>
       </div>
       <div class="cv__main" id="cvMain"></div>
@@ -69,13 +69,9 @@
   <main class="view view--page" id="view-contact" data-view="contact" hidden>
     <div class="contact">
       <div class="contact__side">
-        <h1 class="display">Écrivez-moi<i class="dotr">.</i></h1>
+        <h1 class="display">Écrivez-moi</h1>
         <p class="contact__lead" id="contactTexte"></p>
-        <ul class="contact__links">
-          <li><span class="mono label">Adresse mail</span><a id="cMail" href="#"></a></li>
-        </ul>
-        <button type="button" class="more" id="more" aria-expanded="false" aria-controls="extra" hidden><i>+</i> autres coordonnées</button>
-        <div class="contact__extra" id="extra"><div><ul class="contact__links" id="extraList"></ul></div></div>
+        <a class="pill" id="cIn" href="#" target="_blank" rel="noopener" hidden>LinkedIn <span aria-hidden="true">↗</span></a>
       </div>
       <form class="form" id="contactForm" novalidate>
         <label class="field">
@@ -110,7 +106,7 @@
 
   <div class="cursor" id="cursor" aria-hidden="true"><span>→ Voir le projet</span></div>
 
-  <noscript><p style="padding:6rem 1rem">Ce site nécessite JavaScript. Contact : manonmaurel@orange.fr</p></noscript>
+  <noscript><p style="padding:6rem 1rem">Ce site nécessite JavaScript.</p></noscript>
 
   <script src="js/main.js"></script>
 </body>

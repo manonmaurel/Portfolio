@@ -1,5 +1,5 @@
 /* Le contenu du site est dans content/contenu.json
-   (modifiable depuis la page admin.html, sans toucher au code). */
+   (projets, textes et images : rien à modifier dans ce fichier). */
 (async () => {
   "use strict";
 
@@ -38,27 +38,8 @@
   $("#year").textContent = new Date().getFullYear();
   $("#topName").textContent = SITE.nom;
   $("#topRole").innerHTML = (SITE.role || []).map(esc).join("<br>");
-  const mailto = "mailto:" + SITE.email;
-  Object.assign($("#cMail"), { href: mailto, textContent: SITE.email });
   $("#contactTexte").textContent = INFOS.contactTexte || "";
-
-  // Téléphone et LinkedIn : masqués, accessibles par un bouton discret
-  const extras = [];
-  if (SITE.telephone) extras.push(["Téléphone", "tel:" + SITE.telephone.replace(/\s/g, ""), SITE.telephone, ""]);
-  if (SITE.linkedin) extras.push(["LinkedIn", SITE.linkedin, SITE.linkedinLabel || "LinkedIn", ' target="_blank" rel="noopener"']);
-  if (extras.length) {
-    const more = $("#more");
-    more.hidden = false;
-    more.addEventListener("click", () => {
-      const open = more.getAttribute("aria-expanded") !== "true";
-      more.setAttribute("aria-expanded", String(open));
-      $("#extra").classList.toggle("is-open", open);
-      // les coordonnées ne sont écrites dans la page qu'à la demande
-      $("#extraList").innerHTML = open
-        ? extras.map(([l, h, t, x]) => `<li><span class="mono label">${l}</span><a href="${esc(h)}"${x}>${esc(t)}</a></li>`).join("")
-        : "";
-    });
-  }
+  if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, hidden: false });
 
   if (INFOS.portrait)
     $("#portrait").innerHTML = `<img src="${IMG}${esc(INFOS.portrait)}" alt="Portrait de ${esc(SITE.nom)}" loading="lazy">`;
@@ -120,7 +101,7 @@
       a.draggable = false;
       a.setAttribute("aria-label", `${p.titre} — voir le projet`);
       a.innerHTML =
-        `<span class="tile__cap"><span class="tile__num">${pad(n)}<i class="dotr">.</i></span>` +
+        `<span class="tile__cap"><span class="tile__num">${pad(n)}</span>` +
         `<span class="tile__title">${esc(p.titre)}</span>` +
         `<span class="tile__cat">[${esc(catLabel(p.categorie))}]</span></span>` +
         `<span class="tile__media">` +
@@ -242,7 +223,7 @@
     b.dataset.cat = c.id;
     b.setAttribute("aria-pressed", String(c.id === "tout"));
     filters.appendChild(b);
-    filters.appendChild(i < CATS.length - 1 ? el("span", "sep", ", ") : el("i", "dotr", "."));
+    if (i < CATS.length - 1) filters.appendChild(el("span", "sep", ", "));
   });
   filters.addEventListener("click", (e) => {
     const b = e.target.closest("button");
@@ -324,7 +305,7 @@
       `<div class="project__side">` +
       `<a class="project__back mono" href="#/">← Index</a>` +
       `<p class="mono">P${pad(idx + 1, 3)} / ${pad(PROJETS.length, 3)}</p>` +
-      `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}<i class="dotr">.</i></h1>` +
+      `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}</h1>` +
       `<dl class="project__meta mono">` +
       `<dt>Catégorie</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
       (p.annee ? `<dt>Année</dt><dd>${esc(p.annee)}</dd>` : "") +
@@ -344,6 +325,7 @@
   /* ---------- CONTACT : formulaire ---------- */
   const form = $("#contactForm");
   const status = $("#formStatus");
+  form.hidden = !SITE.formulaire;
   const say = (msg, cls) => { status.textContent = msg; status.className = "mono form__status" + (cls ? " " + cls : ""); };
   form.addEventListener("input", (e) => {
     const field = e.target.closest(".field");
@@ -367,30 +349,22 @@
     const objet = f.get("objet").trim() || "Prise de contact via le portfolio";
     const message = f.get("message").trim();
 
-    if (SITE.formulaire) {
-      // Envoi direct via un service de formulaire (adresse réglée dans l'admin)
-      const btn = $(".send", form);
-      btn.disabled = true;
-      say("Envoi en cours…");
-      try {
-        const r = await fetch(SITE.formulaire, {
-          method: "POST",
-          headers: { Accept: "application/json", "Content-Type": "application/json" },
-          body: JSON.stringify({ nom, email, objet, message, _subject: objet }),
-        });
-        if (!r.ok) throw new Error(r.status);
-        form.reset();
-        say("Merci ! Votre message a bien été envoyé.", "is-ok");
-      } catch (err) {
-        say("L’envoi a échoué. Écrivez-moi directement : " + SITE.email, "is-bad");
-      }
-      btn.disabled = false;
-      return;
+    const btn = $(".send", form);
+    btn.disabled = true;
+    say("Envoi en cours…");
+    try {
+      const r = await fetch(SITE.formulaire, {
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
+        body: JSON.stringify({ nom, email, objet, message, _subject: objet }),
+      });
+      if (!r.ok) throw new Error(r.status);
+      form.reset();
+      say("Merci ! Votre message a bien été envoyé.", "is-ok");
+    } catch (err) {
+      say("L’envoi a échoué. Merci de réessayer dans un instant.", "is-bad");
     }
-    // Sans service : ouvre la messagerie du visiteur avec le mail déjà rédigé
-    const body = `${message}\n\n— ${nom}\n${email}`;
-    location.href = `${mailto}?subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(body)}`;
-    say("Votre messagerie s’ouvre avec le message prêt à envoyer.", "is-ok");
+    btn.disabled = false;
   });
 
   /* ---------- Routeur (#/, #/liste, #/infos, #/contact, #/projet/id) ---------- */
