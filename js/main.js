@@ -37,7 +37,7 @@
   /* ---------- En-tête, infos, coordonnées ---------- */
   $("#year").textContent = new Date().getFullYear();
   $("#topName").textContent = SITE.nom;
-  $("#topRole").textContent = (SITE.role || []).length ? ", " + SITE.role.join(", ") : "";
+  $("#topRole").textContent = (SITE.role || []).join(" — ");
   $("#contactTexte").textContent = INFOS.contactTexte || "";
   if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, hidden: false });
 
@@ -87,7 +87,6 @@
 
   /* ---------- INDEX : ligne d'images ---------- */
   const strip = $("#strip");
-  const pct = $("#pct");
   let n = 0;
   PROJETS.forEach((p) => {
     const items = p.images && p.images.length ? p.images : [null];
@@ -208,13 +207,6 @@
     }
   });
 
-  const updatePct = () => {
-    const m = maxScroll();
-    pct.textContent = `[${pad(m > 0 ? Math.round((strip.scrollLeft / m) * 100) : 0, 3)}%]`;
-  };
-  strip.addEventListener("scroll", updatePct, { passive: true });
-  window.addEventListener("resize", updatePct);
-
   /* ---------- Filtres ---------- */
   const filters = $("#filters");
   CATS.forEach((c, i) => {
@@ -238,7 +230,6 @@
     setOn(null);
     cancelAnimationFrame(raf); raf = 0; target = 0;
     strip.scrollTo({ left: 0, behavior: "smooth" });
-    setTimeout(updatePct, 700);
   });
 
   /* ---------- Curseur ---------- */
@@ -406,7 +397,7 @@
     );
     cursor.classList.remove("is-on");
     setOn(null);
-    if (view === "index") { strip.scrollLeft = stripLeft; target = stripLeft; updatePct(); }
+    if (view === "index") { strip.scrollLeft = stripLeft; target = stripLeft; }
     else window.scrollTo(0, 0);
   };
   window.addEventListener("hashchange", route);
