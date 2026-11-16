@@ -1,0 +1,115 @@
+{
+  "site": {
+    "nom": "Manon Maurel",
+    "role": ["Création & mode", "Disponible en freelance"],
+    "email": "manonmaurel@orange.fr",
+    "telephone": "+33 6 51 05 31 30",
+    "linkedin": "https://www.linkedin.com/in/manonmaurel",
+    "linkedinLabel": "@manonmaurel",
+    "formulaire": ""
+  },
+  "infos": {
+    "portrait": "portrait.webp",
+    "accroche": "Je suis Manon Maurel, ingénieure spécialisée en packaging et impression, et depuis toujours passionnée par l’art et ses formes d’expression.",
+    "paragraphes": [
+      "Aujourd’hui, je me dirige vers un Mastère en Management de la Mode et du Luxe afin d’unir ces deux dimensions de ma personnalité : ma créativité, qui s’exprime depuis l’enfance, et mon esprit scientifique, qui me donne les outils pour la structurer et la concrétiser.",
+      "Je dessine, je peins, je fais de la photographie et du design graphique. Tout type de création est pour moi un réel moment d’évasion.",
+      "Chacune de mes œuvres reflète mon évolution. Elles sont des fragments de ma personnalité et des étapes dans ma découverte d’une esthétique qui me correspond."
+    ],
+    "signature": "Le rouge, fil conducteur de mon univers, en est la pièce maîtresse : il traverse mes dessins et mon style vestimentaire, comme une signature que je suis enfin prête à affirmer.",
+    "savoirFaire": ["Design graphique", "Dessin & peinture", "Photographie", "Packaging & impression"],
+    "outils": ["Photoshop", "Illustrator"],
+    "contactTexte": "N’hésitez pas à me contacter, c’est l’occasion d’échanger — ou bien de collaborer !"
+  },
+  "categories": [
+    { "id": "creations", "label": "créations" },
+    { "id": "ifm", "label": "projets ifm" }
+  ],
+  "projets": [
+    {
+      "id": "coeurs",
+      "titre": "Cœurs",
+      "categorie": "creations",
+      "annee": "2022 — 2024",
+      "medium": "Peinture à l’huile, photographie",
+      "aVenir": false,
+      "intro": "Le cœur a une forte importance dans mon univers, qu’il soit anatomique ou symbolique.",
+      "texte": [
+        "Je peins principalement avec de la peinture à l’huile — toujours avec du rouge, et parfois une touche de bleu Majorelle."
+      ],
+      "images": [
+        { "src": "peinture-balloon-heart.webp", "w": 1400, "h": 1382, "legende": "« Balloon heart » — août 2024" },
+        { "src": "peinture-boom.webp", "w": 1906, "h": 2399, "legende": "« Boom bleu majorelle » — décembre 2022" },
+        { "src": "photo-cadenas.webp", "w": 1350, "h": 2400, "legende": "" }
+      ]
+    },
+    {
+      "id": "pointillisme",
+      "titre": "Pointillisme",
+      "categorie": "creations",
+      "annee": "2020",
+      "medium": "Encre sur papier",
+      "aVenir": false,
+      "intro": "Le réalisme est le style le plus présent dans mes créations, et notamment la représentation du corps humain.",
+      "texte": [],
+      "images": [
+        { "src": "dessin-01.webp", "w": 1393, "h": 2399, "legende": "" },
+        { "src": "dessin-02.webp", "w": 1559, "h": 2391, "legende": "" }
+      ]
+    },
+    {
+      "id": "cranes",
+      "titre": "Crânes",
+      "categorie": "creations",
+      "annee": "2018",
+      "medium": "Encre sur papier",
+      "aVenir": false,
+      "intro": "J’aime représenter la fragilité de la vie à travers la finesse de traits, rappelant la précarité de l’existence et la beauté de ce qui disparaît.",
+      "texte": [],
+      "images": [
+        { "src": "dessin-03.webp", "w": 1619, "h": 2399, "legende": "« Young and alive »" },
+        { "src": "dessin-04.webp", "w": 1601, "h": 2400, "legende": "" }
+      ]
+    },
+    {
+      "id": "voyages",
+      "titre": "Voyages",
+      "categorie": "creations",
+      "annee": "Carnets de voyage",
+      "medium": "Photographie",
+      "aVenir": false,
+      "intro": "Mes photos sont prises au cours de mes voyages. Ils sont ma plus grande source d’inspiration.",
+      "texte": [],
+      "images": [
+        { "src": "photo-antigua.webp", "w": 2400, "h": 1350, "legende": "Antigua, Guatemala" },
+        { "src": "photo-flores.webp", "w": 2399, "h": 1439, "legende": "Flores, Guatemala" },
+        { "src": "photo-desert.webp", "w": 1350, "h": 2400, "legende": "" },
+        { "src": "photo-voiture.webp", "w": 1350, "h": 2400, "legende": "" },
+        { "src": "photo-crepuscule.webp", "w": 1350, "h": 2400, "legende": "" },
+        { "src": "photo-mer.webp", "w": 2161, "h": 1216, "legende": "" }
+      ]
+    },
+    {
+      "id": "ifm-01",
+      "titre": "Projet IFM 01",
+      "categorie": "ifm",
+      "annee": "IFM",
+      "medium": "À compléter",
+      "aVenir": true,
+      "intro": "Projet réalisé à l’Institut Français de la Mode — bientôt en ligne.",
+      "texte": [],
+      "images": []
+    },
+    {
+      "id": "ifm-02",
+      "titre": "Projet IFM 02",
+      "categorie": "ifm",
+      "annee": "IFM",
+      "medium": "À compléter",
+      "aVenir": true,
+      "intro": "Projet réalisé à l’Institut Français de la Mode — bientôt en ligne.",
+      "texte": [],
+      "images": []
+    }
+  ]
+}

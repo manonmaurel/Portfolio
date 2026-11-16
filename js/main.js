@@ -1,12 +1,27 @@
-(() => {
+/* Le contenu du site est dans content/contenu.json
+   (modifiable depuis la page admin.html, sans toucher au code). */
+(async () => {
   "use strict";
 
-  const SITE = window.SITE;
-  const CATS = window.CATEGORIES;
-  const PROJETS = window.PROJETS;
-  const IMG = "assets/img/";
   const $ = (s, el = document) => el.querySelector(s);
   const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+
+  let DATA;
+  try {
+    const r = await fetch("content/contenu.json", { cache: "no-cache" });
+    if (!r.ok) throw new Error(r.status);
+    DATA = await r.json();
+  } catch (e) {
+    $("#strip").innerHTML = '<p class="mono" style="margin:auto">Impossible de charger le contenu.</p>';
+    return;
+  }
+
+  const SITE = DATA.site;
+  const INFOS = DATA.infos || {};
+  const CATS = [{ id: "tout", label: "tout" }, ...DATA.categories];
+  const PROJETS = DATA.projets;
+  const IMG = "assets/img/";
+  const small = (src) => src.replace(/(\.[a-z0-9]+)$/i, "-s$1");
   const pad = (n, l = 2) => String(n).padStart(l, "0");
   const catLabel = (id) => (CATS.find((c) => c.id === id) || {}).label || id;
   const el = (tag, cls, html) => {
@@ -16,29 +31,47 @@
     return e;
   };
   const esc = (s) =>
-    String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    String(s == null ? "" : s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
 
-  /* ---------- Coordonnées ---------- */
+  /* ---------- En-tête, infos, coordonnées ---------- */
   $("#year").textContent = new Date().getFullYear();
+  $("#topName").textContent = SITE.nom;
+  $("#topRole").innerHTML = (SITE.role || []).map(esc).join("<br>");
+  $("#topMail").textContent = SITE.email;
   const mailto = "mailto:" + SITE.email;
-  Object.assign($("#topMail"), { href: mailto, textContent: SITE.email });
   Object.assign($("#cMail"), { href: mailto, textContent: SITE.email });
-  Object.assign($("#cTel"), { href: "tel:" + SITE.telephone.replace(/\s/g, ""), textContent: SITE.telephone });
-  Object.assign($("#cIn"), { href: SITE.linkedin, textContent: SITE.linkedinLabel });
+  if (SITE.telephone) Object.assign($("#cTel"), { href: "tel:" + SITE.telephone.replace(/\s/g, ""), textContent: SITE.telephone });
+  else $("#cTel").closest("li").remove();
+  if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, textContent: SITE.linkedinLabel || "LinkedIn" });
+  else $("#cIn").closest("li").remove();
+  $("#contactTexte").textContent = INFOS.contactTexte || "";
 
-  /* ---------- INDEX : bande ---------- */
+  if (INFOS.portrait)
+    $("#portrait").innerHTML = `<img src="${IMG}${esc(INFOS.portrait)}" alt="Portrait de ${esc(SITE.nom)}" loading="lazy">`;
+  const liste = (titre, items) =>
+    items && items.length
+      ? `<section><h2 class="mono label">${titre}</h2><ul>${items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></section>`
+      : "";
+  $("#infosText").innerHTML =
+    (INFOS.accroche ? `<p class="lead">${esc(INFOS.accroche)}</p>` : "") +
+    (INFOS.paragraphes || []).map((p) => `<p>${esc(p)}</p>`).join("") +
+    (INFOS.signature ? `<p class="accent">${esc(INFOS.signature)}</p>` : "") +
+    `<div class="infos__grid">${liste("Savoir-faire", INFOS.savoirFaire)}${liste("Outils", INFOS.outils)}</div>` +
+    `<a class="infos__cta" href="#/contact"><span class="mono label">Contact</span><span class="display">Écrivez-moi →</span></a>`;
+
+  /* ---------- INDEX : ligne d'images ---------- */
   const strip = $("#strip");
   const pct = $("#pct");
   let n = 0;
   PROJETS.forEach((p) => {
-    const items = p.images.length ? p.images : [null];
+    const items = p.images && p.images.length ? p.images : [null];
     items.forEach((im) => {
       n += 1;
       const a = el("a", "tile" + (im ? "" : " tile--soon"));
       a.href = "#/projet/" + p.id;
       a.dataset.cat = p.categorie;
-      a.style.setProperty("--r", im ? (im.w / im.h).toFixed(4) : "0.75");
+      a.style.setProperty("--r", im && im.w && im.h ? (im.w / im.h).toFixed(4) : "0.75");
       a.style.setProperty("--i", n);
       a.draggable = false;
       a.setAttribute("aria-label", `${p.titre} — voir le projet`);
@@ -48,7 +81,7 @@
         `<span class="tile__cat">[${esc(catLabel(p.categorie))}]</span></span>` +
         `<span class="tile__media">` +
         (im
-          ? `<img src="${IMG}${im.src}-s.webp" width="${im.w}" height="${im.h}" alt="${esc(im.legende || p.titre)}" draggable="false" ${n > 6 ? 'loading="lazy"' : ""}>`
+          ? `<img src="${IMG}${esc(small(im.src))}" alt="${esc(im.legende || p.titre)}" draggable="false" ${n > 8 ? 'loading="lazy"' : ""}>`
           : `À venir`) +
         `</span>`;
       strip.appendChild(a);
@@ -68,6 +101,27 @@
     });
     strip.addEventListener("mouseleave", () => setOn(null));
   }
+
+  // La courbe : chaque vignette est placée à l'intérieur d'un cylindre,
+  // plus elle s'éloigne du centre de l'écran, plus elle avance et pivote vers nous.
+  const ANGLE = (26 * Math.PI) / 180; // angle atteint au bord de l'écran
+  const curve = () => {
+    if (document.body.dataset.view === "index") {
+      const half = strip.clientWidth / 2;
+      const R = half / ANGLE; // rayon du cylindre
+      const sl = strip.scrollLeft;
+      for (const t of tiles) {
+        if (t.classList.contains("is-out")) continue;
+        const s = t.offsetLeft + t.offsetWidth / 2 - sl - half; // distance au centre, le long de l'arc
+        const a = Math.max(-1, Math.min(1, s / R));
+        const x = R * Math.sin(a) - R * a;
+        const z = R * (1 - Math.cos(a));
+        t.style.transform = `translateX(${x.toFixed(1)}px) translateZ(${z.toFixed(1)}px) rotateY(${(-a * 57.2958).toFixed(2)}deg)`;
+      }
+    }
+    requestAnimationFrame(curve);
+  };
+  requestAnimationFrame(curve);
 
   // Défilement fluide : molette verticale -> horizontal, glisser à la souris, flèches
   let target = 0;
@@ -151,7 +205,11 @@
     if (!b) return;
     $$("button", filters).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     const cat = b.dataset.cat;
-    tiles.forEach((t) => t.classList.toggle("is-out", cat !== "tout" && t.dataset.cat !== cat));
+    tiles.forEach((t) => {
+      const out = cat !== "tout" && t.dataset.cat !== cat;
+      t.classList.toggle("is-out", out);
+      if (out) t.style.transform = "";
+    });
     setOn(null);
     cancelAnimationFrame(raf); raf = 0; target = 0;
     strip.scrollTo({ left: 0, behavior: "smooth" });
@@ -172,16 +230,17 @@
   /* ---------- LISTE ---------- */
   const list = $("#list");
   PROJETS.forEach((p, i) => {
+    const imgs = p.images || [];
     const li = el("li", "row" + (p.aVenir ? " row--soon" : ""));
     li.innerHTML =
       `<a class="row__link" href="#/projet/${p.id}">` +
       `<span class="row__title"><span class="row__num">P${pad(i + 1, 3)}</span>${esc(p.titre)}</span>` +
       `<span class="row__cat">${esc(catLabel(p.categorie))} — ${esc(p.medium)}</span>` +
       `<span class="row__year">${esc(p.annee)}</span>` +
-      `<span class="row__arrow">${p.aVenir ? "À venir" : "(" + p.images.length + ")"}</span></a>` +
-      (p.images.length
+      `<span class="row__arrow">${p.aVenir ? "À venir" : "(" + imgs.length + ")"}</span></a>` +
+      (imgs.length
         ? `<a class="row__thumbs" href="#/projet/${p.id}" tabindex="-1" aria-hidden="true"><div>` +
-          p.images.map((im) => `<img src="${IMG}${im.src}-s.webp" width="${im.w}" height="${im.h}" alt="" loading="lazy">`).join("") +
+          imgs.map((im) => `<img src="${IMG}${esc(small(im.src))}" width="${im.w}" height="${im.h}" alt="" loading="lazy">`).join("") +
           `</div></a>`
         : "");
     list.appendChild(li);
@@ -201,16 +260,15 @@
   const renderProject = (p) => {
     const idx = PROJETS.indexOf(p);
     const next = PROJETS[(idx + 1) % PROJETS.length];
-    const media = p.images.length
-      ? p.images
+    const imgs = p.images || [];
+    const media = imgs.length
+      ? imgs
           .map((im, i) => {
             const portrait = im.h > im.w;
-            const inner = im.video
-              ? `<video src="assets/video/${im.video}.mp4" poster="${IMG}${im.src}.webp" width="${im.w}" height="${im.h}" autoplay muted loop playsinline></video>`
-              : `<img src="${IMG}${im.src}.webp" width="${im.w}" height="${im.h}" alt="${esc(im.legende || p.titre + " — image " + (i + 1))}" ${i ? 'loading="lazy"' : ""}>`;
             return (
               `<figure class="shot reveal${portrait ? " shot--portrait" : ""}">` +
-              `<span class="shot__n">(${i + 1})</span><div class="shot__img">${inner}</div>` +
+              `<span class="shot__n">(${i + 1})</span><div class="shot__img">` +
+              `<img src="${IMG}${esc(im.src)}" width="${im.w}" height="${im.h}" alt="${esc(im.legende || p.titre + " — image " + (i + 1))}" ${i ? 'loading="lazy"' : ""}></div>` +
               (im.legende ? `<figcaption class="shot__cap mono">${esc(im.legende)}</figcaption>` : "") +
               `</figure>`
             );
@@ -225,10 +283,11 @@
       `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}</h1>` +
       `<dl class="project__meta mono">` +
       `<dt>Catégorie</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
-      `<dt>Année</dt><dd>${esc(p.annee)}</dd>` +
-      `<dt>Médium</dt><dd>${esc(p.medium)}</dd></dl>` +
+      (p.annee ? `<dt>Année</dt><dd>${esc(p.annee)}</dd>` : "") +
+      (p.medium ? `<dt>Médium</dt><dd>${esc(p.medium)}</dd>` : "") +
+      `</dl>` +
       `<p class="project__intro">${esc(p.intro)}</p>` +
-      `<div class="project__text">${p.texte.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
+      `<div class="project__text">${(p.texte || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
       `</div>` +
       `<div class="project__media">${media}</div>` +
       `<a class="project__next" href="#/projet/${next.id}"><span class="mono label">Projet suivant</span>` +
@@ -238,7 +297,59 @@
     document.title = `${p.titre} — ${SITE.nom}`;
   };
 
-  /* ---------- Routeur (#/, #/liste, #/infos, #/projet/id) ---------- */
+  /* ---------- CONTACT : formulaire ---------- */
+  const form = $("#contactForm");
+  const status = $("#formStatus");
+  const say = (msg, cls) => { status.textContent = msg; status.className = "mono form__status" + (cls ? " " + cls : ""); };
+  form.addEventListener("input", (e) => {
+    const field = e.target.closest(".field");
+    if (field && e.target.checkValidity()) field.classList.remove("is-bad");
+  });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const f = new FormData(form);
+    if (f.get("_gotcha")) return; // anti-robots
+    let bad = false;
+    $$(".field", form).forEach((field) => {
+      const input = $("input, textarea", field);
+      const invalid = !input.checkValidity();
+      field.classList.toggle("is-bad", invalid);
+      bad = bad || invalid;
+    });
+    if (bad) return say("Merci de compléter les champs en rouge.", "is-bad");
+
+    const nom = f.get("nom").trim();
+    const email = f.get("email").trim();
+    const objet = f.get("objet").trim() || "Prise de contact via le portfolio";
+    const message = f.get("message").trim();
+
+    if (SITE.formulaire) {
+      // Envoi direct via un service de formulaire (adresse réglée dans l'admin)
+      const btn = $(".send", form);
+      btn.disabled = true;
+      say("Envoi en cours…");
+      try {
+        const r = await fetch(SITE.formulaire, {
+          method: "POST",
+          headers: { Accept: "application/json", "Content-Type": "application/json" },
+          body: JSON.stringify({ nom, email, objet, message, _subject: objet }),
+        });
+        if (!r.ok) throw new Error(r.status);
+        form.reset();
+        say("Merci ! Votre message a bien été envoyé.", "is-ok");
+      } catch (err) {
+        say("L’envoi a échoué. Écrivez-moi directement : " + SITE.email, "is-bad");
+      }
+      btn.disabled = false;
+      return;
+    }
+    // Sans service : ouvre la messagerie du visiteur avec le mail déjà rédigé
+    const body = `${message}\n\n— ${nom}\n${email}`;
+    location.href = `${mailto}?subject=${encodeURIComponent(objet)}&body=${encodeURIComponent(body)}`;
+    say("Votre messagerie s’ouvre avec le message prêt à envoyer.", "is-ok");
+  });
+
+  /* ---------- Routeur (#/, #/liste, #/infos, #/contact, #/projet/id) ---------- */
   const views = $$(".view");
   let stripLeft = 0;
   const route = () => {
@@ -248,7 +359,7 @@
     if (view === "projet") {
       proj = PROJETS.find((p) => p.id === parts[1]);
       if (!proj) view = "index";
-    } else if (!["index", "liste", "infos"].includes(view)) view = "index";
+    } else if (!["index", "liste", "infos", "contact"].includes(view)) view = "index";
 
     if (document.body.dataset.view === "index") stripLeft = strip.scrollLeft;
     if (proj) renderProject(proj);

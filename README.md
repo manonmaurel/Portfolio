@@ -2,17 +2,29 @@
 
 Site statique (HTML / CSS / JavaScript, sans dépendance ni étape de build).
 
-- `index.html` — structure des pages (Index, Liste, Infos, Projet)
-- `js/projects.js` — **tout le contenu** : projets, textes, images, coordonnées
-- `js/main.js` — interactions (bande à faire défiler, filtres, navigation)
-- `css/style.css` — mise en page
-- `assets/` — images, vidéo, polices
+## Modifier le site sans toucher au code
 
-## Ajouter ou modifier un projet
+Ouvrir **`/admin.html`** (à la suite de l'adresse du site). On peut y :
 
-1. Déposer les images dans `assets/img/` : une version large `nom.webp` (≈1800 px) et une petite `nom-s.webp` (≈800 px).
-2. Dans `js/projects.js`, copier un bloc de projet et remplir les champs (`categorie` : `"creations"` ou `"ifm"`).
-3. Les deux « Projet IFM » sont des emplacements à compléter : remplacer les textes, ajouter les images et retirer `aVenir: true`.
+- ajouter, modifier, réordonner ou supprimer des projets ;
+- ajouter des images (redimensionnées automatiquement), les légender et les réordonner ;
+- modifier les textes des pages « Infos » et « Contact » et les coordonnées.
+
+Le bouton **Publier** enregistre les changements sur GitHub ; le site se met à jour en une à deux minutes.
+La première fois, l'onglet **Réglages** explique comment créer la clé d'accès GitHub nécessaire (une seule fois par navigateur).
+
+## Organisation des fichiers
+
+- `content/contenu.json` — **tout le contenu** : projets, textes, coordonnées (écrit par la page d'administration)
+- `assets/img/` — images (`nom.jpg` ≈ 1800 px et sa vignette `nom-s.jpg` ≈ 800 px)
+- `index.html`, `css/style.css`, `js/main.js` — le site
+- `admin.html`, `js/admin.js` — la page d'administration
+
+## Formulaire de contact
+
+Par défaut, le formulaire ouvre la messagerie du visiteur avec le mail déjà rédigé.
+Pour un envoi sans quitter le site, créer un formulaire sur formspree.io et coller son adresse
+dans Admin → Infos & contact → « Adresse du service d'envoi ».
 
 ## Voir le site en local
 

@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Administration — Portfolio</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c8201f'/%3E%3C/svg%3E">
+  <style>
+    @font-face { font-family: "Outfit"; src: url("assets/fonts/outfit-latin-wght-normal.woff2") format("woff2"); font-weight: 100 900; font-display: swap; }
+    @font-face { font-family: "DM Mono"; src: url("assets/fonts/dm-mono-latin-400-normal.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+    :root { --ink: #0b0b0b; --mute: #8a8a8a; --faint: #dcdcdc; --line: #ececec; --soft: #f6f6f6; --red: #c8201f; --ok: #1d7a46; }
+    *, *::before, *::after { box-sizing: border-box; }
+    body { margin: 0; font-family: "Outfit", Helvetica, Arial, sans-serif; font-size: 16px; font-weight: 350; line-height: 1.45; color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
+    h1, h2, h3, p, ul, ol { margin: 0; padding: 0; } ul, ol { list-style: none; }
+    a { color: inherit; }
+    button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; padding: 0; }
+    .mono { font-family: "DM Mono", ui-monospace, monospace; font-size: 11px; letter-spacing: .02em; text-transform: uppercase; }
+    .mute { color: var(--mute); }
+
+    .bar { position: sticky; top: 0; z-index: 10; display: flex; align-items: center; gap: 18px; padding: 12px 22px; background: #fff; border-bottom: 1px solid var(--ink); }
+    .bar h1 { font-size: 1.15rem; font-weight: 600; letter-spacing: -.02em; margin-right: auto; }
+    .tabs { display: flex; gap: 4px; }
+    .tabs button { padding: 7px 14px; border-radius: 99px; }
+    .tabs button[aria-selected="true"] { background: var(--ink); color: #fff; }
+    .btn { display: inline-flex; align-items: center; gap: .6em; padding: 9px 16px; border-radius: 99px; border: 1px solid var(--ink); font-weight: 450; white-space: nowrap; text-decoration: none; }
+    .btn:hover { background: var(--soft); }
+    .btn--main { background: var(--ink); color: #fff; }
+    .btn--main:hover { background: var(--red); border-color: var(--red); }
+    .btn--small { padding: 5px 11px; font-size: .9rem; }
+    .btn--danger { border-color: var(--faint); color: var(--red); }
+    .btn[disabled] { opacity: .45; pointer-events: none; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--red); display: none; }
+    .is-dirty .dot { display: inline-block; }
+    #status { min-height: 1.4em; }
+    #status.is-ok { color: var(--ok); } #status.is-bad { color: var(--red); }
+
+    .wrap { display: grid; grid-template-columns: 290px 1fr; min-height: calc(100vh - 62px); }
+    .side { border-right: 1px solid var(--line); padding: 20px 16px; }
+    @media (min-width: 761px) { .side { position: sticky; top: 62px; align-self: start; max-height: calc(100vh - 62px); overflow-y: auto; border-right: 0; box-shadow: 1px 0 0 var(--line); } }
+    .side__head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+    .plist li { display: flex; align-items: center; gap: 6px; border-radius: 10px; padding: 3px 4px 3px 0; }
+    .plist li.is-sel { background: var(--soft); }
+    .plist .pick { flex: 1; text-align: left; padding: 8px 10px; display: flex; gap: 10px; align-items: center; min-width: 0; }
+    .plist .pick img, .plist .pick .ph { width: 34px; height: 34px; object-fit: cover; border-radius: 6px; background: var(--soft); flex: none; border: 1px solid var(--line); }
+    .plist .pick span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 450; }
+    .ico { width: 26px; height: 26px; border-radius: 50%; display: inline-grid; place-items: center; color: var(--mute); flex: none; }
+    .ico:hover { background: #fff; color: var(--ink); box-shadow: 0 0 0 1px var(--faint); }
+
+    .main { padding: 26px clamp(18px, 4vw, 56px) 90px; max-width: 980px; }
+    .main > h2 { font-size: 2rem; font-weight: 600; letter-spacing: -.03em; margin-bottom: 4px; }
+    .main > .sub { color: var(--mute); margin-bottom: 26px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+    .f { display: block; } .f--wide { grid-column: 1 / -1; }
+    .f > span { display: block; margin-bottom: 6px; color: var(--mute); }
+    .f small { display: block; margin-top: 5px; color: var(--mute); font-size: .85rem; }
+    input[type=text], input[type=email], input[type=url], input[type=password], textarea, select {
+      width: 100%; font: inherit; color: var(--ink); background: #fff; border: 1px solid var(--faint); border-radius: 10px; padding: 10px 12px; outline: 0;
+    }
+    textarea { resize: vertical; min-height: 84px; }
+    input:focus, textarea:focus, select:focus { border-color: var(--ink); }
+    .check { display: flex; gap: 10px; align-items: center; }
+    .check input { width: 18px; height: 18px; accent-color: var(--ink); }
+    h3 { font-size: 1.15rem; font-weight: 600; margin: 34px 0 6px; padding-top: 20px; border-top: 1px solid var(--line); }
+    h3 + p { color: var(--mute); margin-bottom: 14px; }
+
+    .imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 14px; }
+    .im { border: 1px solid var(--line); border-radius: 12px; padding: 8px; display: grid; gap: 8px; }
+    .im img { width: 100%; height: 150px; object-fit: contain; background: var(--soft); border-radius: 8px; }
+    .im__row { display: flex; gap: 4px; align-items: center; }
+    .im__row .mono { margin-right: auto; color: var(--mute); }
+    .im input { padding: 7px 9px; font-size: .92rem; }
+    .drop { margin-top: 14px; border: 1.5px dashed var(--faint); border-radius: 14px; padding: 26px; text-align: center; color: var(--mute); cursor: pointer; display: block; transition: border-color .2s, background .2s; }
+    .drop:hover, .drop.is-over { border-color: var(--ink); background: var(--soft); color: var(--ink); }
+    .drop input { display: none; }
+    .foot { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line); }
+
+    .steps { counter-reset: s; display: grid; gap: 10px; margin: 14px 0 22px; }
+    .steps li { counter-increment: s; padding-left: 34px; position: relative; }
+    .steps li::before { content: counter(s); position: absolute; left: 0; top: 0; width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: #fff; font-size: .8rem; display: grid; place-items: center; }
+    .note { background: var(--soft); border-radius: 12px; padding: 14px 16px; margin-bottom: 22px; }
+    code { font-family: "DM Mono", monospace; font-size: .88em; background: var(--soft); padding: 1px 5px; border-radius: 4px; }
+    [hidden] { display: none !important; }
+
+    @media (max-width: 760px) {
+      .bar { flex-wrap: wrap; gap: 10px; padding: 10px 14px; }
+      .wrap { grid-template-columns: 1fr; }
+      .side { border-right: 0; border-bottom: 1px solid var(--line); }
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header class="bar" id="bar">
+    <h1>Administration <span class="mute">— portfolio</span></h1>
+    <nav class="tabs" role="tablist">
+      <button role="tab" data-tab="projets" aria-selected="true">Projets</button>
+      <button role="tab" data-tab="infos" aria-selected="false">Infos &amp; contact</button>
+      <button role="tab" data-tab="reglages" aria-selected="false">Réglages</button>
+    </nav>
+    <a class="btn btn--small" href="./" target="_blank" rel="noopener">Voir le site ↗</a>
+    <button class="btn btn--main" id="publish"><span class="dot"></span>Publier</button>
+  </header>
+  <p class="mono" id="status" style="padding:8px 22px" role="status"></p>
+
+  <div class="wrap" id="tab-projets">
+    <aside class="side">
+      <div class="side__head">
+        <span class="mono mute">Projets</span>
+        <button class="btn btn--small" id="add">+ Nouveau projet</button>
+      </div>
+      <ol class="plist" id="plist"></ol>
+    </aside>
+    <section class="main" id="editor"></section>
+  </div>
+
+  <section class="main" id="tab-infos" hidden></section>
+
+  <section class="main" id="tab-reglages" hidden>
+    <h2>Réglages</h2>
+    <p class="sub">À faire une seule fois, pour que le bouton « Publier » puisse mettre le site à jour.</p>
+    <div class="note">Le site est rangé sur GitHub. Pour y enregistrer vos modifications, cette page a besoin d’une clé d’accès personnelle. Elle reste dans ce navigateur uniquement et ne donne accès qu’à ce site.</div>
+    <ol class="steps">
+      <li>Ouvrez <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com → Settings → Fine-grained tokens → Generate new token</a> (connectée à votre compte GitHub).</li>
+      <li>Nom : <code>Portfolio admin</code>. Expiration : celle de votre choix (1 an par exemple).</li>
+      <li>« Repository access » → <b>Only select repositories</b> → choisissez le dépôt du portfolio.</li>
+      <li>« Permissions » → Repository permissions → <b>Contents : Read and write</b>.</li>
+      <li>Cliquez sur « Generate token », copiez la clé (elle commence par <code>github_pat_</code>) et collez-la ci-dessous.</li>
+    </ol>
+    <div class="grid">
+      <label class="f f--wide"><span class="mono">Clé d’accès GitHub</span><input type="password" id="s-token" autocomplete="off" placeholder="github_pat_…"></label>
+      <label class="f"><span class="mono">Compte GitHub</span><input type="text" id="s-owner"></label>
+      <label class="f"><span class="mono">Dépôt</span><input type="text" id="s-repo"></label>
+      <label class="f"><span class="mono">Branche publiée</span><input type="text" id="s-branch" placeholder="(branche principale)"><small>Laissez vide pour utiliser la branche principale du dépôt.</small></label>
+    </div>
+    <div class="foot" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn--main" id="s-save">Enregistrer et tester</button>
+      <button class="btn" id="s-export">Télécharger le contenu (.json)</button>
+    </div>
+  </section>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>
