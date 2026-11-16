@@ -18,9 +18,9 @@
   <header class="top">
     <a class="top__id" href="#/"><span class="top__name" id="topName">Manon Maurel</span><span class="top__role" id="topRole"></span></a>
     <nav class="top__nav" aria-label="Navigation principale">
-      <a href="#/" data-nav="index">Index</a>, <a href="#/liste" data-nav="liste">Liste</a>, <a href="#/infos" data-nav="infos">À propos</a>, <a href="#/parcours" data-nav="parcours">Parcours</a>
+      <a href="#/" data-nav="index" data-t="nav_index">Index</a>, <a href="#/liste" data-nav="liste" data-t="nav_liste">Liste</a>, <a href="#/infos" data-nav="infos" data-t="nav_infos">À propos</a>, <a href="#/parcours" data-nav="parcours" data-t="nav_parcours">Parcours</a>
     </nav>
-    <a class="top__cta" href="#/contact" data-nav="contact">Écrivez-moi</a>
+    <a class="top__cta" href="#/contact" data-nav="contact" data-t="nav_contact">Écrivez-moi</a>
   </header>
 
   <!-- INDEX : ligne incurvée d'images à faire défiler -->
@@ -36,7 +36,7 @@
   <!-- LISTE -->
   <main class="view view--page" id="view-liste" data-view="liste" hidden>
     <div class="page-head">
-      <h1 class="display">Liste</h1>
+      <h1 class="display" data-t="titre_liste">Liste</h1>
       <p class="mono page-head__note" id="listCount"></p>
     </div>
     <ol class="list" id="list"></ol>
@@ -46,7 +46,7 @@
   <main class="view view--page" id="view-infos" data-view="infos" hidden>
     <div class="infos">
       <div class="infos__col infos__col--title">
-        <h1 class="display">À propos</h1>
+        <h1 class="display" data-t="titre_infos">À propos</h1>
         <figure class="infos__portrait" id="portrait"></figure>
       </div>
       <div class="infos__col infos__col--text" id="infosText"></div>
@@ -57,7 +57,7 @@
   <main class="view view--page" id="view-parcours" data-view="parcours" hidden>
     <div class="cv">
       <div class="cv__side">
-        <h1 class="display">Parcours</h1>
+        <h1 class="display" data-t="titre_parcours">Parcours</h1>
         <figure class="cv__portrait" id="cvPortrait"></figure>
       </div>
       <div class="cv__main" id="cvMain"></div>
@@ -68,30 +68,30 @@
   <main class="view view--page" id="view-contact" data-view="contact" hidden>
     <div class="contact">
       <div class="contact__side">
-        <h1 class="display">Écrivez-moi</h1>
+        <h1 class="display" data-t="titre_contact">Écrivez-moi</h1>
         <p class="contact__lead" id="contactTexte"></p>
-        <a class="pill" id="cIn" href="#" target="_blank" rel="noopener" hidden>LinkedIn <span aria-hidden="true">↗</span></a>
+        <a class="pill" id="cIn" href="#" target="_blank" rel="noopener" hidden><span data-t="linkedin">LinkedIn</span> <span aria-hidden="true">↗</span></a>
       </div>
       <form class="form" id="contactForm" novalidate>
         <label class="field">
-          <span class="mono label">01 — Votre nom</span>
+          <span class="mono label">01 — <span data-t="form_nom">Votre nom</span></span>
           <input type="text" name="nom" autocomplete="name" required placeholder="Prénom Nom">
         </label>
         <label class="field">
-          <span class="mono label">02 — Votre e-mail</span>
+          <span class="mono label">02 — <span data-t="form_email">Votre e-mail</span></span>
           <input type="email" name="email" autocomplete="email" required placeholder="vous@exemple.com">
         </label>
         <label class="field">
-          <span class="mono label">03 — Objet</span>
+          <span class="mono label">03 — <span data-t="form_objet">Objet</span></span>
           <input type="text" name="objet" placeholder="Mission freelance, collaboration…">
         </label>
         <label class="field">
-          <span class="mono label">04 — Votre message</span>
+          <span class="mono label">04 — <span data-t="form_message">Votre message</span></span>
           <textarea name="message" rows="5" required placeholder="Parlez-moi de votre projet"></textarea>
         </label>
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
         <div class="form__foot">
-          <button type="submit" class="send"><span>Envoyer le message</span><span aria-hidden="true">→</span></button>
+          <button type="submit" class="send"><span data-t="form_envoyer">Envoyer le message</span><span aria-hidden="true">→</span></button>
           <p class="mono form__status" id="formStatus" role="status"></p>
         </div>
       </form>
@@ -103,7 +103,7 @@
     <article class="project" id="project"></article>
   </main>
 
-  <div class="cursor" id="cursor" aria-hidden="true"><span>→ Voir le projet</span></div>
+  <div class="cursor" id="cursor" aria-hidden="true"><span>→ <i style="font-style:normal" data-t="voir_projet">Voir le projet</i></span></div>
 
   <noscript><p style="padding:6rem 1rem">Ce site nécessite JavaScript.</p></noscript>
 

@@ -17,8 +17,11 @@
   }
 
   const SITE = DATA.site;
+  // Intitulés du site (modifiables dans l'éditeur) et leurs valeurs par défaut
+  const T = Object.assign({"nav_index": "Index", "nav_liste": "Liste", "nav_infos": "À propos", "nav_parcours": "Parcours", "nav_contact": "Écrivez-moi", "filtre_tout": "tout", "voir_projet": "Voir le projet", "a_venir": "À venir", "titre_liste": "Liste", "compte_projets": "projets", "titre_infos": "À propos", "lien_parcours_label": "Mon parcours", "lien_parcours": "Parcours", "lien_contact_label": "Contact", "lien_contact": "Écrivez-moi", "titre_parcours": "Parcours", "fil": "Le fil", "services": "Ce que je peux vous apporter", "cta_label": "Disponible en freelance", "cta": "Travaillons ensemble", "titre_contact": "Écrivez-moi", "linkedin": "LinkedIn", "form_nom": "Votre nom", "form_email": "Votre e-mail", "form_objet": "Objet", "form_message": "Votre message", "form_envoyer": "Envoyer le message", "form_ok": "Merci ! Votre message a bien été envoyé.", "retour": "Index", "meta_categorie": "Catégorie", "meta_annee": "Année", "meta_medium": "Médium", "bientot": "Bientôt en ligne", "projet_suivant": "Projet suivant"}, DATA.textes);
+  document.querySelectorAll("[data-t]").forEach((e) => { if (T[e.dataset.t]) e.textContent = T[e.dataset.t]; });
   const INFOS = DATA.infos || {};
-  const CATS = [{ id: "tout", label: "tout" }, ...DATA.categories];
+  const CATS = [{ id: "tout", label: T.filtre_tout }, ...DATA.categories];
   const PROJETS = DATA.projets;
   const IMG = "assets/img/";
   const small = (src) => src.replace(/(\.[a-z0-9]+)$/i, "-s$1");
@@ -49,8 +52,8 @@
     (INFOS.accroche ? `<p class="lead">${esc(INFOS.accroche)}</p>` : "") +
     (INFOS.paragraphes || []).map((p) => `<p>${esc(p)}</p>`).join("") +
     (INFOS.signature ? `<p class="accent">${esc(INFOS.signature)}</p>` : "") +
-    cta("Mon parcours", "Parcours", "#/parcours") +
-    cta("Contact", "Écrivez-moi", "#/contact");
+    cta(esc(T.lien_parcours_label), esc(T.lien_parcours), "#/parcours") +
+    cta(esc(T.lien_contact_label), esc(T.lien_contact), "#/contact");
 
   /* ---------- PARCOURS ---------- */
   const CV = DATA.parcours || {};
@@ -62,7 +65,7 @@
       ? `<dl class="rep">${CV.reperes.map((r) => `<div><dt>${esc(r.label)}</dt><dd>${esc(r.valeur)}</dd></div>`).join("")}</dl>`
       : "") +
     ((CV.etapes || []).length
-      ? `<h2 class="mono label">Le fil</h2><ol class="thread">` +
+      ? `<h2 class="mono label">${esc(T.fil)}</h2><ol class="thread">` +
         CV.etapes
           .map(
             (e) =>
@@ -77,13 +80,13 @@
         `</ol>`
       : "") +
     ((CV.services || []).length
-      ? `<h2 class="mono label">Ce que je peux vous apporter</h2><ol class="services">` +
+      ? `<h2 class="mono label">${esc(T.services)}</h2><ol class="services">` +
         CV.services
           .map((x, i) => `<li class="service"><span class="service__n">${pad(i + 1)}</span><h3 class="service__title">${esc(x.titre)}</h3><p>${esc(x.texte)}</p></li>`)
           .join("") +
         `</ol>`
       : "") +
-    cta("Disponible en freelance", "Travaillons ensemble", "#/contact");
+    cta(esc(T.cta_label), esc(T.cta), "#/contact");
 
   /* ---------- INDEX : ligne d'images ---------- */
   const strip = $("#strip");
@@ -106,7 +109,7 @@
         `<span class="tile__media">` +
         (im
           ? `<img src="${IMG}${esc(small(im.src))}" alt="${esc(im.legende || p.titre)}" draggable="false" ${n > 8 ? 'loading="lazy"' : ""}>`
-          : `À venir`) +
+          : esc(T.a_venir)) +
         `</span>`;
       strip.appendChild(a);
     });
@@ -253,7 +256,7 @@
       `<span class="row__title"><span class="row__num">P${pad(i + 1, 3)}</span>${esc(p.titre)}</span>` +
       `<span class="row__cat">${esc(catLabel(p.categorie))} — ${esc(p.medium)}</span>` +
       `<span class="row__year">${esc(p.annee)}</span>` +
-      `<span class="row__arrow">${p.aVenir ? "À venir" : "(" + imgs.length + ")"}</span></a>` +
+      `<span class="row__arrow">${p.aVenir ? esc(T.a_venir) : "(" + imgs.length + ")"}</span></a>` +
       (imgs.length
         ? `<a class="row__thumbs" href="#/projet/${p.id}" tabindex="-1" aria-hidden="true"><div>` +
           imgs.map((im) => `<img src="${IMG}${esc(small(im.src))}" width="${im.w}" height="${im.h}" alt="" loading="lazy">`).join("") +
@@ -261,7 +264,7 @@
         : "");
     list.appendChild(li);
   });
-  $("#listCount").textContent = `(${pad(PROJETS.length)}) projets`;
+  $("#listCount").textContent = `(${pad(PROJETS.length)}) ${T.compte_projets}`;
 
   /* ---------- PROJET ---------- */
   const projectEl = $("#project");
@@ -290,23 +293,22 @@
             );
           })
           .join("")
-      : `<div class="project__soon mono">Bientôt en ligne</div>`;
+      : `<div class="project__soon mono">${esc(T.bientot)}</div>`;
 
     projectEl.innerHTML =
       `<div class="project__side">` +
-      `<a class="project__back mono" href="#/">← Index</a>` +
-      `<p class="mono">P${pad(idx + 1, 3)} / ${pad(PROJETS.length, 3)}</p>` +
+      `<a class="project__back mono" href="#/">← ${esc(T.retour)}</a>` +
       `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}</h1>` +
       `<dl class="project__meta mono">` +
-      `<dt>Catégorie</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
-      (p.annee ? `<dt>Année</dt><dd>${esc(p.annee)}</dd>` : "") +
-      (p.medium ? `<dt>Médium</dt><dd>${esc(p.medium)}</dd>` : "") +
+      `<dt>${esc(T.meta_categorie)}</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
+      (p.annee ? `<dt>${esc(T.meta_annee)}</dt><dd>${esc(p.annee)}</dd>` : "") +
+      (p.medium ? `<dt>${esc(T.meta_medium)}</dt><dd>${esc(p.medium)}</dd>` : "") +
       `</dl>` +
       `<p class="project__intro">${esc(p.intro)}</p>` +
       `<div class="project__text">${(p.texte || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
       `</div>` +
       `<div class="project__media">${media}</div>` +
-      `<a class="project__next" href="#/projet/${next.id}"><span class="mono label">Projet suivant</span>` +
+      `<a class="project__next" href="#/projet/${next.id}"><span class="mono label">${esc(T.projet_suivant)}</span>` +
       `<span class="display">${esc(next.titre)} <i class="dotr">→</i></span></a>`;
 
     $$(".reveal", projectEl).forEach((r) => (io ? io.observe(r) : r.classList.add("is-in")));
@@ -367,7 +369,7 @@
       const res = await r.json().catch(() => ({}));
       if (!r.ok || res.success === false || res.success === "false") throw new Error(r.status);
       form.reset();
-      say("Merci ! Votre message a bien été envoyé.", "is-ok");
+      say(T.form_ok, "is-ok");
     } catch (err) {
       say("L’envoi a échoué. Merci de réessayer dans un instant.", "is-bad");
     }
