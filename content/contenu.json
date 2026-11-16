@@ -2,8 +2,8 @@
   "site": {
     "nom": "Manon Maurel",
     "role": [
-      "Création & mode",
-      "Disponible en freelance"
+      "Création et mode",
+      "Assistante freelance"
     ],
     "linkedin": "https://www.linkedin.com/in/manonmaurel",
     "formulaire": "fs:cmYuZWduYXJvQGxlcnVhbW5vbmFt"
@@ -240,5 +240,41 @@
         "texte": "Mon regard d’ingénieure : penser l’objet imprimé jusqu’à sa fabrication."
       }
     ]
+  },
+  "textes": {
+    "nav_index": "Index",
+    "nav_liste": "Liste",
+    "nav_infos": "À propos",
+    "nav_parcours": "Parcours",
+    "nav_contact": "Écrivez-moi",
+    "filtre_tout": "tout",
+    "voir_projet": "Voir le projet",
+    "a_venir": "À venir",
+    "titre_liste": "Liste",
+    "compte_projets": "projets",
+    "titre_infos": "À propos",
+    "lien_parcours_label": "Mon parcours",
+    "lien_parcours": "Parcours",
+    "lien_contact_label": "Contact",
+    "lien_contact": "Écrivez-moi",
+    "titre_parcours": "Parcours",
+    "fil": "Le fil",
+    "services": "Ce que je peux vous apporter",
+    "cta_label": "Disponible en freelance",
+    "cta": "Travaillons ensemble",
+    "titre_contact": "Écrivez-moi",
+    "linkedin": "LinkedIn",
+    "form_nom": "Votre nom",
+    "form_email": "Votre e-mail",
+    "form_objet": "Objet",
+    "form_message": "Votre message",
+    "form_envoyer": "Envoyer le message",
+    "form_ok": "Merci ! Votre message a bien été envoyé.",
+    "retour": "Index",
+    "meta_categorie": "Catégorie",
+    "meta_annee": "Année",
+    "meta_medium": "Médium",
+    "bientot": "Bientôt en ligne",
+    "projet_suivant": "Projet suivant"
   }
 }
