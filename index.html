@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Manon Maurel — Portfolio</title>
+  <meta name="description" content="Portfolio de Manon Maurel — créations et projets mode. Disponible en freelance.">
+  <meta property="og:title" content="Manon Maurel — Portfolio">
+  <meta property="og:description" content="Créations et projets mode. Disponible en freelance.">
+  <meta property="og:image" content="assets/img/peinture-boom-s.webp">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23fff'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23c8201f'/%3E%3C/svg%3E">
+  <link rel="preload" href="assets/fonts/outfit-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-view="index">
+
+  <header class="top">
+    <a class="top__name" href="#/" id="topName">Manon Maurel</a>
+    <p class="top__role" id="topRole"></p>
+    <nav class="top__nav" aria-label="Navigation principale">
+      <a href="#/" data-nav="index">index</a>, <a href="#/liste" data-nav="liste">liste</a>, <a href="#/infos" data-nav="infos">à propos</a>, <a href="#/parcours" data-nav="parcours">parcours</a>, <a href="#/contact" data-nav="contact">contact</a>
+    </nav>
+  </header>
+
+  <!-- INDEX : ligne incurvée d'images à faire défiler -->
+  <main class="view view--index" id="view-index" data-view="index">
+    <h1 class="sr-only">Manon Maurel — portfolio</h1>
+    <div class="stage"><div class="strip" id="strip" tabindex="0" aria-label="Galerie des projets, défilement horizontal"></div></div>
+    <footer class="bottom">
+      <span class="bottom__copy">©<span id="year"></span></span>
+      <div class="filters" id="filters" role="group" aria-label="Filtrer les projets"></div>
+      <span class="bottom__pct" id="pct" aria-hidden="true">[000%]</span>
+    </footer>
+  </main>
+
+  <!-- LISTE -->
+  <main class="view view--page" id="view-liste" data-view="liste" hidden>
+    <div class="page-head">
+      <h1 class="display">Liste</h1>
+      <p class="mono page-head__note" id="listCount"></p>
+    </div>
+    <ol class="list" id="list"></ol>
+  </main>
+
+  <!-- INFOS -->
+  <main class="view view--page" id="view-infos" data-view="infos" hidden>
+    <div class="infos">
+      <div class="infos__col infos__col--title">
+        <h1 class="display">À propos</h1>
+        <figure class="infos__portrait" id="portrait"></figure>
+      </div>
+      <div class="infos__col infos__col--text" id="infosText"></div>
+    </div>
+  </main>
+
+  <!-- PARCOURS -->
+  <main class="view view--page" id="view-parcours" data-view="parcours" hidden>
+    <div class="cv">
+      <div class="cv__side">
+        <h1 class="display">Parcours</h1>
+        <figure class="cv__portrait" id="cvPortrait"></figure>
+      </div>
+      <div class="cv__main" id="cvMain"></div>
+    </div>
+  </main>
+
+  <!-- CONTACT -->
+  <main class="view view--page" id="view-contact" data-view="contact" hidden>
+    <div class="contact">
+      <div class="contact__side">
+        <h1 class="display">Écrivez-moi</h1>
+        <p class="contact__lead" id="contactTexte"></p>
+        <a class="pill" id="cIn" href="#" target="_blank" rel="noopener" hidden>LinkedIn <span aria-hidden="true">↗</span></a>
+      </div>
+      <form class="form" id="contactForm" novalidate>
+        <label class="field">
+          <span class="mono label">01 — Votre nom</span>
+          <input type="text" name="nom" autocomplete="name" required placeholder="Prénom Nom">
+        </label>
+        <label class="field">
+          <span class="mono label">02 — Votre e-mail</span>
+          <input type="email" name="email" autocomplete="email" required placeholder="vous@exemple.com">
+        </label>
+        <label class="field">
+          <span class="mono label">03 — Objet</span>
+          <input type="text" name="objet" placeholder="Mission freelance, collaboration…">
+        </label>
+        <label class="field">
+          <span class="mono label">04 — Votre message</span>
+          <textarea name="message" rows="5" required placeholder="Parlez-moi de votre projet"></textarea>
+        </label>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
+        <div class="form__foot">
+          <button type="submit" class="send"><span>Envoyer le message</span><span aria-hidden="true">→</span></button>
+          <p class="mono form__status" id="formStatus" role="status"></p>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <!-- PROJET -->
+  <main class="view view--page" id="view-projet" data-view="projet" hidden>
+    <article class="project" id="project"></article>
+  </main>
+
+  <div class="cursor" id="cursor" aria-hidden="true"><span>→ Voir le projet</span></div>
+
+  <noscript><p style="padding:6rem 1rem">Ce site nécessite JavaScript.</p></noscript>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
