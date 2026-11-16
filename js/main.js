@@ -353,12 +353,21 @@
     btn.disabled = true;
     say("Envoi en cours…");
     try {
-      const r = await fetch(SITE.formulaire, {
+      // Le message part vers un service d'envoi qui le transmet par mail :
+      // l'adresse de destination n'apparaît nulle part sur le site.
+      const cible = SITE.formulaire.trim();
+      const web3 = !cible.startsWith("http"); // une clé Web3Forms, sinon une adresse Formspree
+      const r = await fetch(web3 ? "https://api.web3forms.com/submit" : cible, {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ nom, email, objet, message, _subject: objet }),
+        body: JSON.stringify(
+          web3
+            ? { access_key: cible, name: nom, email, subject: objet, message, from_name: "Portfolio — " + SITE.nom }
+            : { nom, email, objet, message, _subject: objet }
+        ),
       });
-      if (!r.ok) throw new Error(r.status);
+      const res = await r.json().catch(() => ({}));
+      if (!r.ok || res.success === false) throw new Error(r.status);
       form.reset();
       say("Merci ! Votre message a bien été envoyé.", "is-ok");
     } catch (err) {
