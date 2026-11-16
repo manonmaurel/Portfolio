@@ -37,7 +37,7 @@
   /* ---------- En-tête, infos, coordonnées ---------- */
   $("#year").textContent = new Date().getFullYear();
   $("#topName").textContent = SITE.nom;
-  $("#topRole").textContent = (SITE.role || []).length ? ", " + SITE.role.join(", ") : "";
+  $("#topRole").textContent = (SITE.role || []).join(" — ");
   $("#contactTexte").textContent = INFOS.contactTexte || "";
   if (SITE.linkedin) Object.assign($("#cIn"), { href: SITE.linkedin, hidden: false });
 
