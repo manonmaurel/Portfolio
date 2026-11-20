@@ -401,9 +401,9 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
 }
 .wheel__info {
   position: absolute; z-index: 1; left: 50%;
-  top: calc(var(--cy) + var(--ch) / 2 + 26px);
+  top: calc(var(--cy) + var(--ch) / 2 + 46px);
   width: min(560px, calc(100% - var(--pad) * 2));
-  max-height: calc(var(--h) - var(--cy) - var(--ch) / 2 - 56px);
+  max-height: calc(var(--h) - var(--cy) - var(--ch) / 2 - 76px);
   transform: translateX(-50%);
   text-align: center; overflow-y: auto; scrollbar-width: none; touch-action: pan-y;
 }
@@ -415,7 +415,13 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
 .wheel__more p { font-size: 14px; line-height: 1.45; color: #444; max-width: 44ch; margin: 0 auto .7em; }
 .wheel__toggle { font-size: 13px; color: var(--mute); border-bottom: 1px solid currentColor; padding-bottom: 1px; margin-bottom: 1em; transition: color .25s; }
 .wheel__toggle:hover { color: var(--red); }
-.wheel__legend { color: var(--red); font-size: 13px; font-weight: 500; min-height: 1.3em; }
+.wheel__legend {
+  position: absolute; z-index: 2; left: 50%; transform: translateX(-50%);
+  top: calc(var(--cy) + var(--ch) / 2 + 14px);
+  width: min(560px, calc(100% - var(--pad) * 2));
+  color: var(--red); font-size: 14px; font-weight: 500; text-align: center;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .wheel__hint {
   position: absolute; left: 0; right: 0; bottom: 6px; z-index: 2;
   color: var(--mute); font-size: 13px; font-weight: 450; text-align: center; pointer-events: none;

@@ -296,8 +296,9 @@
       (texte.length
         ? `<div class="wheel__more" hidden>${texte.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
           `<button type="button" class="wheel__toggle" aria-expanded="false">${esc(T.en_savoir_plus)}</button>`
-        : "") +
-      `<p class="wheel__legend" id="wheelLegend" aria-live="polite">${n ? "" : esc(T.bientot)}</p>`;
+        : "");
+    // la légende de l'image affichée, en rouge, juste sous la carte
+    $("#wheelLegend").textContent = n ? "" : T.bientot;
     wview.classList.toggle("is-empty", !n);
     document.title = `${p.titre} — ${SITE.nom}`;
   };
@@ -315,7 +316,7 @@
     const h = wheel.clientHeight;
     const topH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 72;
     const mobile = w < 700;
-    const avail = h - topH - (mobile ? 255 : 215); // on garde de la place pour le texte sous les cartes
+    const avail = h - topH - (mobile ? 280 : 235); // on garde de la place pour le texte sous les cartes
     const ch = Math.max(170, Math.min(avail, mobile ? w * 0.95 : 520));
     const cw = ch * 0.8;
     return {
