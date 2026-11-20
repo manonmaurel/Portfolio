@@ -307,7 +307,7 @@ ul, ol { list-style: none; }
   padding: 11px 20px; font-weight: 500;
   transition: background .25s, border-color .25s, color .25s, gap .4s var(--ease);
 }
-.pill:hover { background: var(--red); border-color: var(--red); color: #fff; gap: 1.4em; }
+.pill:hover { background: var(--red); border-color: var(--red); color: #fff; }
 .pill[hidden] { display: none; }
 
 .form { max-width: 620px; border-top: 1px solid var(--red); }
