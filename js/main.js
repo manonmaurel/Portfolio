@@ -18,7 +18,7 @@
 
   const SITE = DATA.site;
   // Intitulés du site (modifiables dans l'éditeur) et leurs valeurs par défaut
-  const T = Object.assign({"nav_index": "Index", "nav_liste": "Liste", "nav_infos": "À propos", "nav_parcours": "Parcours", "nav_contact": "Écrivez-moi", "filtre_tout": "tout", "voir_projet": "Voir le projet", "a_venir": "À venir", "titre_liste": "Liste", "compte_projets": "projets", "titre_infos": "À propos", "lien_parcours_label": "Mon parcours", "lien_parcours": "Parcours", "lien_contact_label": "Contact", "lien_contact": "Écrivez-moi", "titre_parcours": "Parcours", "fil": "Le fil", "services": "Ce que je peux vous apporter", "cta_label": "Disponible en freelance", "cta": "Travaillons ensemble", "titre_contact": "Écrivez-moi", "linkedin": "LinkedIn", "form_nom": "Votre nom", "form_email": "Votre e-mail", "form_objet": "Objet", "form_message": "Votre message", "form_envoyer": "Envoyer le message", "form_ok": "Merci ! Votre message a bien été envoyé.", "retour": "Index", "bientot": "Bientôt en ligne", "projet_suivant": "Projet suivant", "en_savoir_plus": "En savoir plus", "roue_aide": "Faites tourner la roue, cliquez sur une image pour l’agrandir", "fermer": "Fermer", "ouvrir_pdf": "Ouvrir le PDF"}, DATA.textes);
+  const T = Object.assign({"nav_index": "Index", "nav_liste": "Liste", "nav_infos": "À propos", "nav_parcours": "Parcours", "nav_contact": "Écrivez-moi", "filtre_tout": "tout", "voir_projet": "Voir le projet", "a_venir": "À venir", "titre_liste": "Liste", "compte_projets": "projets", "titre_infos": "À propos", "lien_parcours_label": "Mon parcours", "lien_parcours": "Parcours", "lien_contact_label": "Contact", "lien_contact": "Écrivez-moi", "titre_parcours": "Parcours", "fil": "Le fil", "services": "Ce que je peux vous apporter", "cta_label": "Disponible en freelance", "cta": "Travaillons ensemble", "titre_contact": "Écrivez-moi", "linkedin": "LinkedIn", "form_nom": "Votre nom", "form_email": "Votre e-mail", "form_objet": "Objet", "form_message": "Votre message", "form_envoyer": "Envoyer le message", "form_ok": "Merci ! Votre message a bien été envoyé.", "retour": "Index", "bientot": "Bientôt en ligne", "projet_suivant": "Projet suivant", "en_savoir_plus": "En savoir plus", "roue_aide": "Faites défiler pour parcourir, cliquez sur l’image de devant pour l’agrandir", "fermer": "Fermer", "ouvrir_pdf": "Ouvrir le PDF"}, DATA.textes);
   document.querySelectorAll("[data-t]").forEach((e) => { if (T[e.dataset.t]) e.textContent = T[e.dataset.t]; });
   const INFOS = DATA.infos || {};
   const CATS = [{ id: "tout", label: T.filtre_tout }, ...DATA.categories];
@@ -262,29 +262,25 @@
   });
   $("#listCount").textContent = `(${pad(PROJETS.length)}) ${T.compte_projets}`;
 
-  /* ---------- PROJET : roue d'images ---------- */
-  // Les images (et PDF) d'un projet sont posées sur un cercle dont on voit la moitié haute.
-  // On fait tourner la roue à la molette, au glisser ou aux flèches ; l'image du haut est mise en avant.
+  /* ---------- PROJET : pile de cartes ---------- */
+  // Au clic sur un projet, ses images et documents s'affichent en pile, en perspective, sur l'accueil.
+  // On les fait défiler à la molette, au glisser ou aux flèches ; la carte de devant est mise en avant.
   const wheel = $("#wheel");
-  const wview = $("#view-projet"); // zone de la roue, dans l'accueil
+  const wview = $("#view-projet"); // zone de la pile, dans l'accueil
   const wheelOpen = () => document.body.classList.contains("is-wheel");
   const info = $("#wheelInfo");
   const lb = $("#lb");
-  const DEG = Math.PI / 180;
-  const W = { p: null, items: [], els: [], step: 24, full: false, rot: 0, target: 0, active: -1, drag: null, snapT: 0 };
+  const W = { p: null, items: [], els: [], step: 1, full: false, rot: 0, target: 0, active: -1, drag: null, snapT: 0 };
 
   const renderProject = (p) => {
     const items = p.images || [];
     const n = items.length;
-    W.full = n >= 12;
-    W.step = W.full ? 360 / n : 30;
-    // la roue s'ouvre sur l'image du milieu, pour que l'arc soit équilibré
-    const start = W.full ? 0 : Math.floor((n - 1) / 2) * W.step;
-    Object.assign(W, { p, items, rot: start - 50, target: start, active: -1 });
+    // les cartes arrivent en glissant depuis la droite
+    Object.assign(W, { p, items, rot: -1.2, target: 0, active: -1 });
     wheel.innerHTML = items
       .map(
         (im, i) =>
-          `<button type="button" class="wi${im.src ? "" : " wi--blank"}" data-i="${i}" style="--r:${im.w && im.h ? (im.w / im.h).toFixed(4) : 0.75}" ` +
+          `<button type="button" class="wi${im.src ? "" : " wi--blank"}" data-i="${i}" ` +
           `aria-label="${esc(im.legende || `${p.titre}, ${im.pdf ? "document" : "image"} ${i + 1}`)}">` +
           (im.src ? `<img src="${IMG}${esc(small(im.src))}" alt="" draggable="false">` : `<span>PDF</span>`) +
           (im.pdf && im.src ? `<i class="wi__tag">PDF</i>` : "") +
@@ -294,9 +290,8 @@
     W.els = $$(".wi", wheel);
     const texte = (p.texte || []).filter(Boolean);
     info.innerHTML =
-      `<p class="mono wheel__cat">${esc(catLabel(p.categorie))}${p.annee ? " — " + esc(p.annee) : ""}</p>` +
+      `<p class="mono wheel__cat">${[catLabel(p.categorie), p.annee, p.medium].filter(Boolean).map(esc).join(" — ")}</p>` +
       `<h1 class="wheel__title">${esc(p.titre)}</h1>` +
-      (p.medium ? `<p class="wheel__medium">${esc(p.medium)}</p>` : "") +
       (p.intro ? `<p class="wheel__intro">${esc(p.intro)}</p>` : "") +
       (texte.length
         ? `<div class="wheel__more" hidden>${texte.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
@@ -314,55 +309,52 @@
     b.setAttribute("aria-expanded", String(!more.hidden));
   });
 
+  // Taille et position des cartes, d'après la place libre entre l'en-tête et « tout, créations, projets »
   const geom = () => {
     const w = wheel.clientWidth;
     const h = wheel.clientHeight;
     const topH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 72;
     const mobile = w < 700;
-    let R, cy;
-    if (mobile) { R = Math.min(w * 0.38, (h - topH) * 0.3); cy = topH + 30 + R * 1.3; }
-    else { cy = h * 0.86; R = Math.min(w * 0.34, (cy - topH - 20) / 1.3); }
-    return { R, cy, h, cx: w / 2, base: R * (mobile ? 0.3 : 0.22), mobile };
+    const avail = h - topH - (mobile ? 235 : 245); // on garde de la place pour le texte sous les cartes
+    const ch = Math.max(150, Math.min(avail, mobile ? w * 0.85 : 460));
+    const cw = ch * 0.8;
+    const gap = cw * (mobile ? 0.22 : 0.3);
+    const shown = Math.max(0, Math.min(W.items.length - 1, mobile ? 4 : 7));
+    const total = cw + shown * gap;
+    const x0 = mobile ? Math.max(cw / 2 + 16, w / 2 - total / 2 + cw / 2) : w / 2 - total / 2 + cw / 2;
+    return { h, cw, ch, gap, x0, cy: topH + 22 + ch / 2, depth: mobile ? 60 : 90, ang: mobile ? 18 : 24, max: mobile ? 5 : 8 };
   };
-  const norm = (a) => ((((a + 180) % 360) + 360) % 360) - 180;
-  const clampT = (t) => (W.full ? t : Math.max(0, Math.min((W.items.length - 1) * W.step, t)));
-  const snap = () => { W.target = clampT(Math.round(W.target / W.step) * W.step); };
-  const goTo = (i) => {
-    const n = W.items.length;
-    if (!n) return;
-    let t;
-    if (W.full) {
-      t = i * W.step;
-      t += Math.round((W.target - t) / 360) * 360; // le chemin le plus court
-    } else t = Math.max(0, Math.min(n - 1, i)) * W.step;
-    W.target = clampT(t);
-  };
+  const clampT = (t) => Math.max(0, Math.min(W.items.length - 1, t));
+  const snap = () => { W.target = clampT(Math.round(W.target)); };
+  const goTo = (i) => { if (W.items.length) W.target = clampT(i); };
 
   const frame = () => {
     if (wheelOpen() && W.els.length) {
       W.rot += (W.target - W.rot) * 0.14;
-      if (Math.abs(W.target - W.rot) < 0.01) W.rot = W.target;
+      if (Math.abs(W.target - W.rot) < 0.002) W.rot = W.target;
       const g = geom();
       wview.style.setProperty("--cy", g.cy + "px");
-      wview.style.setProperty("--R", g.R + "px");
+      wview.style.setProperty("--ch", g.ch + "px");
+      wview.style.setProperty("--cw", g.cw + "px");
       wview.style.setProperty("--h", g.h + "px");
-      wheel.style.setProperty("--b", g.base + "px");
       W.els.forEach((e, i) => {
-        let a = i * W.step - W.rot;
-        if (W.full) a = norm(a);
-        const d = Math.abs(a);
-        const k = Math.max(0, 1 - d / W.step);
-        const s = 1 + (g.mobile ? 0.75 : 0.95) * k * k * (3 - 2 * k);
-        const x = g.cx + g.R * Math.sin(a * DEG);
-        const y = g.cy - g.R * Math.cos(a * DEG);
-        e.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%) rotate(${a.toFixed(2)}deg) scale(${s.toFixed(3)})`;
-        e.style.opacity = d <= 95 ? 1 : Math.max(0, 1 - (d - 95) / 25);
-        e.style.zIndex = 300 - Math.round(d);
-        e.style.visibility = d > 125 ? "hidden" : "";
+        const k = i - W.rot; // 0 = carte de devant, positif = derrière, négatif = déjà vue
+        let x, z, op;
+        if (k >= 0) {
+          x = g.x0 + k * g.gap;
+          z = -k * g.depth;
+          op = k > g.max ? Math.max(0, 1 - (k - g.max)) : 1;
+        } else {
+          x = g.x0 + k * g.cw * 0.9;
+          z = -k * 40;
+          op = Math.max(0, 1 + k * 1.3);
+        }
+        e.style.transform = `translate3d(${x.toFixed(1)}px, ${g.cy.toFixed(1)}px, ${z.toFixed(1)}px) translate(-50%, -50%) rotateY(${g.ang}deg)`;
+        e.style.opacity = op.toFixed(3);
+        e.style.visibility = op < 0.01 ? "hidden" : "";
+        e.style.zIndex = 1000 - Math.round(k * 10);
       });
-      const n = W.items.length;
-      let ai = Math.round(W.rot / W.step);
-      ai = W.full ? ((ai % n) + n) % n : Math.max(0, Math.min(n - 1, ai));
+      const ai = Math.max(0, Math.min(W.items.length - 1, Math.round(W.rot)));
       if (ai !== W.active) {
         W.active = ai;
         W.els.forEach((e, i) => e.classList.toggle("is-active", i === ai));
@@ -380,7 +372,7 @@
       if (e.target.closest(".wheel__info") && info.scrollHeight > info.clientHeight) return; // laisse défiler le texte
       e.preventDefault();
       const d = (Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX) * (e.deltaMode === 1 ? 32 : 1);
-      W.target = clampT(W.target + d * 0.08);
+      W.target = clampT(W.target + d * 0.005);
       clearTimeout(W.snapT);
       W.snapT = setTimeout(snap, 180);
     },
@@ -396,7 +388,7 @@
     const dx = e.clientX - d.x;
     if (!d.moved && Math.abs(dx) > 6) { d.moved = true; wheel.classList.add("is-dragging"); }
     if (d.moved) {
-      W.target = clampT(d.t - dx / (geom().R * DEG));
+      W.target = clampT(d.t - dx / geom().gap);
       d.v = e.clientX - d.lx;
       d.lx = e.clientX;
     }
@@ -405,7 +397,7 @@
     const d = W.drag;
     W.drag = null;
     if (!d || !d.moved) return;
-    W.target = clampT(W.target - (d.v * 5) / (geom().R * DEG)); // inertie
+    W.target = clampT(W.target - (d.v * 4) / geom().gap); // inertie
     snap();
     setTimeout(() => wheel.classList.remove("is-dragging"), 0);
   };

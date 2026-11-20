@@ -364,12 +364,12 @@ ul, ol { list-style: none; }
 .service p { color: #444; font-size: .97rem; }
 
 /* ---------- PROJET : roue d'images ---------- */
-/* La roue s'ouvre dans l'accueil : la ligne d'images s'efface, la roue prend sa place */
+/* Au clic sur un projet, la ligne d'images s'efface et la pile de cartes du projet prend sa place */
 .strip { transition: opacity .5s var(--ease), transform .6s var(--ease); }
 body.is-wheel .strip { opacity: 0; transform: scale(.96); pointer-events: none; }
 body.is-wheel .stage::before { opacity: 0; transition: opacity .4s; }
 .wheelzone {
-  --cy: 70vh; --R: 300px; --h: 80vh;
+  --cy: 40vh; --ch: 400px; --cw: 320px; --h: 80vh;
   position: absolute; inset: 0; z-index: 3; overflow: hidden;
   touch-action: none; user-select: none; -webkit-user-select: none;
   opacity: 0; visibility: hidden; transition: opacity .5s var(--ease), visibility 0s .5s;
@@ -380,17 +380,19 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
   font-size: 14px; font-weight: 500; border-bottom: 1px solid currentColor; transition: color .25s;
 }
 .wheel__close:hover { color: var(--red); }
-.wheel { position: absolute; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; }
+.wheel { position: absolute; inset: 0; touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab; perspective: 1600px; perspective-origin: 50% 40%; }
 .wheel.is-dragging { cursor: grabbing; }
 .wi {
   position: absolute; left: 0; top: 0;
-  height: var(--b, 100px); width: calc(var(--b, 100px) * clamp(.62, var(--r), 1.6));
-  background: #f4f4f4; overflow: hidden;
-  will-change: transform; transition: opacity .3s;
+  width: var(--cw); height: var(--ch);
+  border-radius: 14px; background: #f4f4f4; overflow: hidden;
+  box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 18px 40px -18px rgba(0, 0, 0, .35);
+  will-change: transform, opacity; backface-visibility: hidden;
 }
 .wi img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; -webkit-user-drag: none; }
 .wi.is-active { cursor: zoom-in; }
 .wheel.is-dragging .wi { cursor: grabbing; }
+.wi:not(.is-active) { cursor: pointer; }
 .wi--blank { background: #fff; border: 1px solid var(--faint); display: grid; place-items: center; color: var(--mute); font-size: 12px; font-weight: 500; }
 .wi__tag {
   position: absolute; right: 4px; bottom: 4px;
@@ -399,15 +401,15 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
 }
 .wheel__info {
   position: absolute; z-index: 1; left: 50%;
-  top: calc(var(--cy) - var(--R) * .62);
-  width: min(calc(var(--R) * 1.05), 520px);
-  max-height: calc(var(--R) * .62);
+  top: calc(var(--cy) + var(--ch) / 2 + 26px);
+  width: min(560px, calc(100% - var(--pad) * 2));
+  max-height: calc(var(--h) - var(--cy) - var(--ch) / 2 - 56px);
   transform: translateX(-50%);
   text-align: center; overflow-y: auto; scrollbar-width: none; touch-action: pan-y;
 }
 .wheel__info::-webkit-scrollbar { display: none; }
 .wheel__cat { color: var(--mute); }
-.wheel__title { font-weight: 600; font-size: clamp(1.8rem, 3.4vw, 3.2rem); line-height: .95; letter-spacing: -.035em; margin: .2em 0 .25em; overflow-wrap: anywhere; }
+.wheel__title { font-weight: 600; font-size: clamp(1.5rem, 2.4vw, 2.3rem); line-height: .95; letter-spacing: -.035em; margin: .2em 0 .25em; overflow-wrap: anywhere; }
 .wheel__medium { color: var(--mute); font-size: 14px; margin-bottom: .8em; }
 .wheel__intro { font-size: 15px; line-height: 1.4; max-width: 44ch; margin: 0 auto .8em; }
 .wheel__more p { font-size: 14px; line-height: 1.45; color: #444; max-width: 44ch; margin: 0 auto .7em; }
@@ -461,8 +463,7 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
   .row__cat, .row__arrow { display: none; }
 
   .infos, .contact, .cv { grid-template-columns: 1fr; gap: 36px; }
-  .wheel__info { top: calc(var(--cy) + 56px); width: calc(100% - var(--pad) * 2); max-height: calc(var(--h) - var(--cy) - 56px); }
-  .wheel__title { font-size: clamp(1.7rem, 8vw, 2.4rem); }
+  .wheel__title { font-size: clamp(1.4rem, 6.5vw, 2rem); }
   .wheel__hint { display: none; }
   .lb { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr auto; }
   .lb__fig { grid-column: 1 / -1; grid-row: 1; }
