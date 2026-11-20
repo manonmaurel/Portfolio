@@ -78,8 +78,8 @@ ul, ol { list-style: none; }
 }
 .top > * { pointer-events: auto; }
 .top__id { justify-self: start; display: grid; gap: 1px; }
-.top__name { font-weight: 500; line-height: 1.25; transition: color .25s; }
-.top__id:hover .top__name { color: var(--red); }
+.top__name { font-weight: 500; line-height: 1.25; color: var(--red); transition: opacity .25s; }
+.top__id:hover .top__name { opacity: .7; }
 .top__role { color: var(--ink); font-weight: 500; line-height: 1.25; }
 .top__nav { color: var(--faint); font-weight: 500; }
 .top__nav a { color: var(--mute); transition: color .25s; }
@@ -385,7 +385,7 @@ body.is-wheel .wheelzone { opacity: 1; visibility: visible; transition: opacity 
 .wi {
   position: absolute; left: 0; top: 0;
   width: var(--cw); height: var(--ch);
-  border-radius: 14px; background: #f4f4f4; overflow: hidden;
+  border-radius: 12px; background: #f4f4f4; overflow: hidden;
   box-shadow: 0 1px 0 rgba(255, 255, 255, .8) inset, 0 18px 40px -18px rgba(0, 0, 0, .35);
   will-change: transform, opacity; backface-visibility: hidden;
 }
