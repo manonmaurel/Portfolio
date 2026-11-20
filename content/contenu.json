@@ -170,11 +170,7 @@
       },
       {
         "label": "Outils",
-        "valeur": "Suite Adobe (Photoshop, Illustrator, InDesign), Pack Office, Notion, Canva"
-      },
-      {
-        "label": "Disponibilité",
-        "valeur": "Missions en freelance"
+        "valeur": "Suite Adobe, Pack Office, Notion, Canva"
       }
     ],
     "etapes": [
@@ -182,19 +178,25 @@
         "periode": "Depuis l’enfance",
         "titre": "Dessin, peinture, photographie",
         "lieu": "Pratique personnelle",
-        "texte": "Une créativité qui s’exprime depuis toujours, et un fil conducteur : le rouge."
+        "texte": "Ma créativité s’exprime depuis toujours, j'en ai exploré différentes formes. "
       },
       {
-        "periode": "Formation",
+        "periode": "Formations",
         "titre": "Diplôme d’ingénieure",
         "lieu": "Spécialité packaging & impression",
-        "texte": "L’esprit scientifique, pour structurer les idées et les concrétiser."
+        "texte": "Développement de mon esprit scientifique, pour structurer les idées et les concrétiser."
       },
       {
-        "periode": "Aujourd’hui",
+        "periode": "Formations",
         "titre": "Mastère Management de la Mode et du Luxe",
-        "lieu": "IFM",
-        "texte": "Unir les deux dimensions de ma personnalité : la créativité et la rigueur."
+        "lieu": "Institut Français de la Mode",
+        "texte": "Compréhension des enjeux stratégiques, créatifs et économiques d'un secteur qui me passionne. "
+      },
+      {
+        "periode": "Aujourd'hui",
+        "titre": "Assistante Freelance",
+        "lieu": "",
+        "texte": "J'unis les deux dimensions de ma personnalité, la créativité et la rigueur, afin d'assister les entreprises créatives dans leurs tâches, de la création à la livraison. "
       }
     ],
     "services": [
