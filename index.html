@@ -26,7 +26,15 @@
   <!-- INDEX : ligne incurvée d'images à faire défiler -->
   <main class="view view--index" id="view-index" data-view="index">
     <h1 class="sr-only">Manon Maurel — portfolio</h1>
-    <div class="stage"><div class="strip" id="strip" tabindex="0" aria-label="Galerie des projets, défilement horizontal"></div></div>
+    <div class="stage">
+      <div class="strip" id="strip" tabindex="0" aria-label="Galerie des projets, défilement horizontal"></div>
+      <section class="wheelzone" id="view-projet" aria-label="Images du projet" aria-hidden="true">
+        <div class="wheel" id="wheel"></div>
+        <div class="wheel__info" id="wheelInfo"></div>
+        <a class="wheel__close" href="#/" data-t="fermer">Fermer</a>
+        <p class="wheel__hint" data-t="roue_aide">Faites tourner la roue, cliquez sur une image pour l’agrandir</p>
+      </section>
+    </div>
     <footer class="bottom">
       <span class="bottom__copy">©<span id="year"></span></span>
       <div class="filters" id="filters" role="group" aria-label="Filtrer les projets"></div>
@@ -96,17 +104,6 @@
         </div>
       </form>
     </div>
-  </main>
-
-  <!-- PROJET : roue d'images -->
-  <main class="view view--wheel" id="view-projet" data-view="projet" hidden>
-    <div class="wheel" id="wheel" aria-label="Images du projet"></div>
-    <div class="wheel__info" id="wheelInfo"></div>
-    <nav class="wheel__foot" aria-label="Navigation entre projets">
-      <a href="#/" class="wheel__back">← <span data-t="retour">Index</span></a>
-      <p class="wheel__hint" data-t="roue_aide">Faites tourner la roue, cliquez sur une image pour l’agrandir</p>
-      <a href="#/" class="wheel__next" id="wheelNext"></a>
-    </nav>
   </main>
 
   <!-- Image ou PDF agrandi -->

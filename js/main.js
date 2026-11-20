@@ -160,7 +160,7 @@
   window.addEventListener(
     "wheel",
     (e) => {
-      if (document.body.dataset.view !== "index") return;
+      if (document.body.dataset.view !== "index" || wheelOpen()) return;
       if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) { target = strip.scrollLeft; return; } // trackpad horizontal : natif
       e.preventDefault();
       const unit = e.deltaMode === 1 ? 32 : 1;
@@ -197,7 +197,7 @@
   strip.addEventListener("dragstart", (e) => e.preventDefault());
 
   window.addEventListener("keydown", (e) => {
-    if (document.body.dataset.view !== "index") return;
+    if (document.body.dataset.view !== "index" || wheelOpen()) return;
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       if (!raf) target = strip.scrollLeft;
       glideTo(target + (e.key === "ArrowRight" ? 1 : -1) * strip.clientWidth * 0.45);
@@ -217,6 +217,7 @@
   filters.addEventListener("click", (e) => {
     const b = e.target.closest("button");
     if (!b) return;
+    if (wheelOpen()) location.hash = "#/";
     $$("button", filters).forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
     const cat = b.dataset.cat;
     tiles.forEach((t) => {
@@ -235,7 +236,7 @@
     window.addEventListener("mousemove", (e) => {
       cursor.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
       const over = e.target.closest && e.target.closest(".tile__media");
-      cursor.classList.toggle("is-on", !!over && !strip.classList.contains("is-dragging"));
+      cursor.classList.toggle("is-on", !!over && !strip.classList.contains("is-dragging") && !wheelOpen());
     });
     document.addEventListener("mouseleave", () => cursor.classList.remove("is-on"));
   }
@@ -265,22 +266,21 @@
   // Les images (et PDF) d'un projet sont posées sur un cercle dont on voit la moitié haute.
   // On fait tourner la roue à la molette, au glisser ou aux flèches ; l'image du haut est mise en avant.
   const wheel = $("#wheel");
-  const wview = $("#view-projet");
+  const wview = $("#view-projet"); // zone de la roue, dans l'accueil
+  const wheelOpen = () => document.body.classList.contains("is-wheel");
   const info = $("#wheelInfo");
   const lb = $("#lb");
   const DEG = Math.PI / 180;
   const W = { p: null, items: [], els: [], step: 24, full: false, rot: 0, target: 0, active: -1, drag: null, snapT: 0 };
 
   const renderProject = (p) => {
-    const idx = PROJETS.indexOf(p);
-    const next = PROJETS[(idx + 1) % PROJETS.length];
     const items = p.images || [];
     const n = items.length;
     W.full = n >= 12;
     W.step = W.full ? 360 / n : 30;
     // la roue s'ouvre sur l'image du milieu, pour que l'arc soit équilibré
     const start = W.full ? 0 : Math.floor((n - 1) / 2) * W.step;
-    Object.assign(W, { p, items, rot: start, target: start, active: -1 });
+    Object.assign(W, { p, items, rot: start - 50, target: start, active: -1 });
     wheel.innerHTML = items
       .map(
         (im, i) =>
@@ -303,10 +303,6 @@
           `<button type="button" class="wheel__toggle" aria-expanded="false">${esc(T.en_savoir_plus)}</button>`
         : "") +
       `<p class="wheel__legend" id="wheelLegend" aria-live="polite">${n ? "" : esc(T.bientot)}</p>`;
-    const nx = $("#wheelNext");
-    nx.href = "#/projet/" + next.id;
-    nx.innerHTML = `${esc(T.projet_suivant)}<span class="wheel__nexttitle"> : ${esc(next.titre)}</span> →`;
-    nx.hidden = PROJETS.length < 2;
     wview.classList.toggle("is-empty", !n);
     document.title = `${p.titre} — ${SITE.nom}`;
   };
@@ -324,9 +320,9 @@
     const topH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 72;
     const mobile = w < 700;
     let R, cy;
-    if (mobile) { R = w * 0.4; cy = topH + 36 + R * 1.3; }
-    else { cy = h * 0.8; R = Math.min(w * 0.34, (cy - topH - 24) / 1.3); }
-    return { R, cy, cx: w / 2, base: R * (mobile ? 0.3 : 0.22), mobile };
+    if (mobile) { R = Math.min(w * 0.38, (h - topH) * 0.3); cy = topH + 30 + R * 1.3; }
+    else { cy = h * 0.86; R = Math.min(w * 0.34, (cy - topH - 20) / 1.3); }
+    return { R, cy, h, cx: w / 2, base: R * (mobile ? 0.3 : 0.22), mobile };
   };
   const norm = (a) => ((((a + 180) % 360) + 360) % 360) - 180;
   const clampT = (t) => (W.full ? t : Math.max(0, Math.min((W.items.length - 1) * W.step, t)));
@@ -343,12 +339,13 @@
   };
 
   const frame = () => {
-    if (document.body.dataset.view === "projet" && W.els.length) {
+    if (wheelOpen() && W.els.length) {
       W.rot += (W.target - W.rot) * 0.14;
       if (Math.abs(W.target - W.rot) < 0.01) W.rot = W.target;
       const g = geom();
       wview.style.setProperty("--cy", g.cy + "px");
       wview.style.setProperty("--R", g.R + "px");
+      wview.style.setProperty("--h", g.h + "px");
       wheel.style.setProperty("--b", g.base + "px");
       W.els.forEach((e, i) => {
         let a = i * W.step - W.rot;
@@ -471,13 +468,14 @@
     if (e.target === lb || e.target.classList.contains("lb__media")) closeLb();
   });
   window.addEventListener("keydown", (e) => {
-    if (document.body.dataset.view !== "projet") return;
+    if (!wheelOpen()) return;
     if (!lb.hidden) {
       if (e.key === "Escape") closeLb();
       else if (e.key === "ArrowRight") lbGo(1);
       else if (e.key === "ArrowLeft") lbGo(-1);
       return;
     }
+    if (e.key === "Escape") { location.hash = "#/"; return; }
     if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
       const n = W.items.length;
       if (!n) return;
@@ -560,9 +558,12 @@
       if (!proj) view = "index";
     } else if (!["index", "liste", "infos", "parcours", "contact"].includes(view)) view = "index";
 
-    if (document.body.dataset.view === "index") stripLeft = strip.scrollLeft;
+    if (document.body.dataset.view === "index" && !wheelOpen()) stripLeft = strip.scrollLeft;
     if (proj) renderProject(proj);
     else document.title = `${SITE.nom} — Portfolio`;
+    if (view === "projet") view = "index";
+    document.body.classList.toggle("is-wheel", !!proj);
+    wview.setAttribute("aria-hidden", String(!proj));
 
     document.body.dataset.view = view;
     views.forEach((v) => (v.hidden = v.dataset.view !== view));
@@ -572,7 +573,7 @@
     cursor.classList.remove("is-on");
     closeLb();
     setOn(null);
-    if (view === "index") { strip.scrollLeft = stripLeft; target = stripLeft; }
+    if (view === "index" && !proj) { strip.scrollLeft = stripLeft; target = stripLeft; }
     else window.scrollTo(0, 0);
   };
   window.addEventListener("hashchange", route);
