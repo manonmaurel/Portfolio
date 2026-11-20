@@ -6,6 +6,14 @@
   font-display: swap;
 }
 /* ---------- Base ---------- */
+/* Curseur : une flèche fine et moderne partout (pas de main), rouge sur ce qui est cliquable */
+:root {
+  --cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M5 3.5 21 11l-6.9 2.1L11 20.5Z' fill='%230b0b0b' stroke='%23fff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, default;
+  --cursor-on: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='26' height='26' viewBox='0 0 26 26'%3E%3Cpath d='M5 3.5 21 11l-6.9 2.1L11 20.5Z' fill='%23c8201f' stroke='%23fff' stroke-width='1.6' stroke-linejoin='round'/%3E%3C/svg%3E") 5 3, pointer;
+}
+html, body, .strip, .strip.is-dragging, .wheel, .wheel.is-dragging, .wheel.is-dragging .wi { cursor: var(--cursor) !important; }
+a, button, label, select, summary, .tile, .wi, .wi.is-active, .row__link, .filters button { cursor: var(--cursor-on) !important; }
+input, textarea { cursor: text !important; }
 :root {
   --bg: #ffffff;
   --ink: #0b0b0b;
