@@ -275,8 +275,8 @@
   const renderProject = (p) => {
     const items = p.images || [];
     const n = items.length;
-    // les cartes arrivent en glissant depuis la droite
-    Object.assign(W, { p, items, rot: -1.2, target: 0, active: -1 });
+    // les cartes arrivent depuis la pile de droite
+    Object.assign(W, { p, items, rot: 1.5, target: 0, active: -1 });
     wheel.innerHTML = items
       .map(
         (im, i) =>
@@ -315,14 +315,20 @@
     const h = wheel.clientHeight;
     const topH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 72;
     const mobile = w < 700;
-    const avail = h - topH - (mobile ? 235 : 245); // on garde de la place pour le texte sous les cartes
-    const ch = Math.max(150, Math.min(avail, mobile ? w * 0.85 : 460));
+    const avail = h - topH - (mobile ? 255 : 215); // on garde de la place pour le texte sous les cartes
+    const ch = Math.max(170, Math.min(avail, mobile ? w * 0.95 : 520));
     const cw = ch * 0.8;
-    const gap = cw * (mobile ? 0.22 : 0.3);
-    const shown = Math.max(0, Math.min(W.items.length - 1, mobile ? 4 : 7));
-    const total = cw + shown * gap;
-    const x0 = mobile ? Math.max(cw / 2 + 16, w / 2 - total / 2 + cw / 2) : w / 2 - total / 2 + cw / 2;
-    return { h, cw, ch, gap, x0, cy: topH + 22 + ch / 2, depth: mobile ? 60 : 90, ang: mobile ? 18 : 24, max: mobile ? 5 : 8 };
+    return {
+      h, ch, cw, mobile,
+      cx: w / 2,
+      cy: topH + (mobile ? 50 : 18) + ch / 2,
+      maxW: mobile ? w - 40 : w * 0.5,
+      first: mobile ? cw * 0.62 : cw * 0.78, // décalage de la première carte en attente
+      gap: cw * (mobile ? 0.14 : 0.24), // écart entre les cartes empilées
+      depth: mobile ? 50 : 80,
+      ang: mobile ? 38 : 34, // inclinaison des cartes en attente, comme sur la référence
+      max: mobile ? 4 : 7,
+    };
   };
   const clampT = (t) => Math.max(0, Math.min(W.items.length - 1, t));
   const snap = () => { W.target = clampT(Math.round(W.target)); };
@@ -335,24 +341,35 @@
       const g = geom();
       wview.style.setProperty("--cy", g.cy + "px");
       wview.style.setProperty("--ch", g.ch + "px");
-      wview.style.setProperty("--cw", g.cw + "px");
       wview.style.setProperty("--h", g.h + "px");
       W.els.forEach((e, i) => {
-        const k = i - W.rot; // 0 = carte de devant, positif = derrière, négatif = déjà vue
-        let x, z, op;
+        // la carte garde les proportions de son image
+        const im = W.items[i];
+        const r = Math.max(0.62, Math.min(1.5, im.w && im.h ? im.w / im.h : 0.8));
+        const cw = Math.min(g.ch * r, g.maxW);
+        e.style.width = cw.toFixed(1) + "px";
+        e.style.height = (cw / r).toFixed(1) + "px";
+
+        const k = i - W.rot; // 0 = carte affichée, positif = en attente à droite, négatif = déjà vue
+        let x, z, a, op;
         if (k >= 0) {
-          x = g.x0 + k * g.gap;
-          z = -k * g.depth;
+          // la carte affichée est droite et centrée ; les suivantes s'empilent à droite, inclinées
+          const t = Math.min(k, 1);
+          x = g.cx + t * g.first + Math.max(0, k - 1) * g.gap;
+          z = -t * 140 - Math.max(0, k - 1) * g.depth;
+          a = t * g.ang;
           op = k > g.max ? Math.max(0, 1 - (k - g.max)) : 1;
         } else {
-          x = g.x0 + k * g.cw * 0.9;
-          z = -k * 40;
-          op = Math.max(0, 1 + k * 1.3);
+          // les cartes déjà vues glissent vers la gauche et s'effacent
+          x = g.cx + k * g.cw * 0.9;
+          z = k * 60;
+          a = Math.max(-1, k) * -12;
+          op = Math.max(0, 1 + k * 1.4);
         }
-        e.style.transform = `translate3d(${x.toFixed(1)}px, ${g.cy.toFixed(1)}px, ${z.toFixed(1)}px) translate(-50%, -50%) rotateY(${g.ang}deg)`;
+        e.style.transform = `translate3d(${x.toFixed(1)}px, ${g.cy.toFixed(1)}px, ${z.toFixed(1)}px) translate(-50%, -50%) rotateY(${a.toFixed(2)}deg)`;
         e.style.opacity = op.toFixed(3);
         e.style.visibility = op < 0.01 ? "hidden" : "";
-        e.style.zIndex = 1000 - Math.round(k * 10);
+        e.style.zIndex = 1000 - Math.round(Math.abs(k) * 10);
       });
       const ai = Math.max(0, Math.min(W.items.length - 1, Math.round(W.rot)));
       if (ai !== W.active) {
@@ -388,7 +405,7 @@
     const dx = e.clientX - d.x;
     if (!d.moved && Math.abs(dx) > 6) { d.moved = true; wheel.classList.add("is-dragging"); }
     if (d.moved) {
-      W.target = clampT(d.t - dx / geom().gap);
+      W.target = clampT(d.t - dx / (geom().cw * 0.7));
       d.v = e.clientX - d.lx;
       d.lx = e.clientX;
     }
@@ -397,7 +414,7 @@
     const d = W.drag;
     W.drag = null;
     if (!d || !d.moved) return;
-    W.target = clampT(W.target - (d.v * 4) / geom().gap); // inertie
+    W.target = clampT(W.target - (d.v * 4) / (geom().cw * 0.7)); // inertie
     snap();
     setTimeout(() => wheel.classList.remove("is-dragging"), 0);
   };
