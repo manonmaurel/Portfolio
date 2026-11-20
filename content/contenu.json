@@ -10,13 +10,13 @@
   },
   "infos": {
     "portrait": "portrait.webp",
-    "accroche": "Je suis Manon Maurel, ingénieure spécialisée en packaging et impression, et depuis toujours passionnée par l’art et ses formes d’expression.",
+    "accroche": "J'accompagne les entreprises créatives dans l'organisation et la réalisation de leurs projets. \nPour que vous puissiez vous consacrer à ce que vous faites de mieux : créer.",
     "paragraphes": [
-      "Aujourd’hui, je me dirige vers un Mastère en Management de la Mode et du Luxe afin d’unir ces deux dimensions de ma personnalité : ma créativité, qui s’exprime depuis l’enfance, et mon esprit scientifique, qui me donne les outils pour la structurer et la concrétiser.",
-      "Je dessine, je peins, je fais de la photographie et du design graphique. Tout type de création est pour moi un réel moment d’évasion.",
-      "Chacune de mes œuvres reflète mon évolution. Elles sont des fragments de ma personnalité et des étapes dans ma découverte d’une esthétique qui me correspond."
+      "Ingénieure spécialisée en packaging et impression, diplômée du Mastère Management de la Mode et du Luxe de l'IFM, j'accompagne en freelance les marques, studios et entreprises créatives qui manquent de temps ou de bras.",
+      "Concrètement, je vous libère des tâches qui ralentissent vos projets. Je construis vos plannings et rétroplannings, et je fais en sorte qu’ils soient tenus. Je relance vos fournisseurs, suis vos commandes et votre production, et vérifie la qualité à chaque étape. J’organise vos shootings, événements et lancements, de la logistique aux envois. Et je peux également réaliser vos supports visuels!",
+      "Je parle le langage de la fabrication comme celui de la création, je comprends vite vos attentes, j’anticipe les contraintes techniques et vous permet d’éviter tout oubli ou aller-retour inutile."
     ],
-    "signature": "Le rouge, fil conducteur de mon univers, en est la pièce maîtresse : il traverse mes dessins et mon style vestimentaire, comme une signature que je suis enfin prête à affirmer.",
+    "signature": "Le rouge est ma signature : il traverse mes dessins, mon style, et chaque projet personnel que je mène. ",
     "contactTexte": "N’hésitez pas à me contacter, c’est l’occasion d’échanger — et de collaborer !"
   },
   "categories": [
@@ -158,10 +158,10 @@
     }
   ],
   "parcours": {
-    "accroche": "Ingénieure de formation, créative depuis toujours : j’unis l’esprit scientifique et le sens esthétique.",
+    "accroche": "Ingénieure et manager de formation, créative depuis toujours : j’unis l’esprit scientifique et le sens esthétique.",
     "reperes": [
       {
-        "label": "Formation",
+        "label": "Formations",
         "valeur": "Ingénieure packaging & impression et Manager Mode & Luxe (IFM)"
       },
       {
@@ -174,7 +174,7 @@
       },
       {
         "label": "Disponibilité",
-        "valeur": "Missions freelance"
+        "valeur": "Missions en freelance"
       }
     ],
     "etapes": [
@@ -199,26 +199,26 @@
     ],
     "services": [
       {
-        "titre": "Gestion de projets et structuration",
-        "texte": "Optimiser les systèmes et assister les créateurs dans leurs tâches : de la création à la production. "
+        "titre": "Gestion de projets & structuration",
+        "texte": "Planifier les projets, optimiser les systèmes, fixer les délais et le budget. \nJe construis votre planning, suis l'avancement et fais le lien entre vos équipes et vos prestataires.  "
       },
       {
-        "titre": "Design graphique",
-        "texte": "Créations visuelles et supports pour les marques, sur Photoshop, Illustrator, InDesign."
+        "titre": "Production & fabrication",
+        "texte": "Rédiger un cahier des charges, choisir les matériaux et les finitions, suivre les fournisseurs et les commandes. \nJe veille à la qualité et au respect des délais, de la création à la production. "
       },
       {
-        "titre": "Photographie",
-        "texte": "Un regard nourri par le voyage, la couleur et la lumière."
+        "titre": "Relation client & SAV",
+        "texte": "Répondre aux demandes et réclamations, suivre les retours, échanges et remboursement, et tenir vos clients informés à chaque étape. \nJe veille à ce que chaque client soit satisfait. "
       },
       {
-        "titre": "Packaging & impression",
-        "texte": "Penser l’objet imprimé jusqu’à sa fabrication."
+        "titre": "Création visuelle",
+        "texte": "Concevoir des affiches, des visuels pour les réseaux sociaux, des présentations ou une identité visuelle. \nJe réalise vos supports en respectant votre univers. "
       }
     ],
     "portrait": ""
   },
   "textes": {
-    "nav_index": "Index",
+    "nav_index": "Accueil",
     "nav_liste": "Liste",
     "nav_infos": "À propos",
     "nav_parcours": "Parcours",
@@ -240,13 +240,13 @@
     "cta": "Travaillons ensemble",
     "titre_contact": "Écrivez-moi",
     "linkedin": "LinkedIn",
-    "form_nom": "Votre nom",
+    "form_nom": "Votre nom et prénom",
     "form_email": "Votre e-mail",
     "form_objet": "Objet",
     "form_message": "Votre message",
     "form_envoyer": "Envoyer le message",
     "form_ok": "Merci ! Votre message a bien été envoyé.",
-    "retour": "Index",
+    "retour": "Accueil",
     "meta_categorie": "Catégorie",
     "meta_annee": "Année",
     "meta_medium": "Médium",
