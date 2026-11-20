@@ -98,10 +98,24 @@
     </div>
   </main>
 
-  <!-- PROJET -->
-  <main class="view view--page" id="view-projet" data-view="projet" hidden>
-    <article class="project" id="project"></article>
+  <!-- PROJET : roue d'images -->
+  <main class="view view--wheel" id="view-projet" data-view="projet" hidden>
+    <div class="wheel" id="wheel" aria-label="Images du projet"></div>
+    <div class="wheel__info" id="wheelInfo"></div>
+    <nav class="wheel__foot" aria-label="Navigation entre projets">
+      <a href="#/" class="wheel__back">← <span data-t="retour">Index</span></a>
+      <p class="wheel__hint" data-t="roue_aide">Faites tourner la roue, cliquez sur une image pour l’agrandir</p>
+      <a href="#/" class="wheel__next" id="wheelNext"></a>
+    </nav>
   </main>
+
+  <!-- Image ou PDF agrandi -->
+  <div class="lb" id="lb" role="dialog" aria-modal="true" aria-label="Image agrandie" hidden>
+    <button type="button" class="lb__close" data-lb="close" data-t="fermer">Fermer</button>
+    <button type="button" class="lb__nav lb__prev" data-lb="prev" aria-label="Précédent">←</button>
+    <figure class="lb__fig"><div class="lb__media" id="lbMedia"></div><figcaption class="lb__cap" id="lbCap"></figcaption></figure>
+    <button type="button" class="lb__nav lb__next" data-lb="next" aria-label="Suivant">→</button>
+  </div>
 
   <div class="cursor" id="cursor" aria-hidden="true"><span>→ <i style="font-style:normal" data-t="voir_projet">Voir le projet</i></span></div>
 

@@ -18,7 +18,7 @@
 
   const SITE = DATA.site;
   // Intitulés du site (modifiables dans l'éditeur) et leurs valeurs par défaut
-  const T = Object.assign({"nav_index": "Index", "nav_liste": "Liste", "nav_infos": "À propos", "nav_parcours": "Parcours", "nav_contact": "Écrivez-moi", "filtre_tout": "tout", "voir_projet": "Voir le projet", "a_venir": "À venir", "titre_liste": "Liste", "compte_projets": "projets", "titre_infos": "À propos", "lien_parcours_label": "Mon parcours", "lien_parcours": "Parcours", "lien_contact_label": "Contact", "lien_contact": "Écrivez-moi", "titre_parcours": "Parcours", "fil": "Le fil", "services": "Ce que je peux vous apporter", "cta_label": "Disponible en freelance", "cta": "Travaillons ensemble", "titre_contact": "Écrivez-moi", "linkedin": "LinkedIn", "form_nom": "Votre nom", "form_email": "Votre e-mail", "form_objet": "Objet", "form_message": "Votre message", "form_envoyer": "Envoyer le message", "form_ok": "Merci ! Votre message a bien été envoyé.", "retour": "Index", "meta_categorie": "Catégorie", "meta_annee": "Année", "meta_medium": "Médium", "bientot": "Bientôt en ligne", "projet_suivant": "Projet suivant"}, DATA.textes);
+  const T = Object.assign({"nav_index": "Index", "nav_liste": "Liste", "nav_infos": "À propos", "nav_parcours": "Parcours", "nav_contact": "Écrivez-moi", "filtre_tout": "tout", "voir_projet": "Voir le projet", "a_venir": "À venir", "titre_liste": "Liste", "compte_projets": "projets", "titre_infos": "À propos", "lien_parcours_label": "Mon parcours", "lien_parcours": "Parcours", "lien_contact_label": "Contact", "lien_contact": "Écrivez-moi", "titre_parcours": "Parcours", "fil": "Le fil", "services": "Ce que je peux vous apporter", "cta_label": "Disponible en freelance", "cta": "Travaillons ensemble", "titre_contact": "Écrivez-moi", "linkedin": "LinkedIn", "form_nom": "Votre nom", "form_email": "Votre e-mail", "form_objet": "Objet", "form_message": "Votre message", "form_envoyer": "Envoyer le message", "form_ok": "Merci ! Votre message a bien été envoyé.", "retour": "Index", "bientot": "Bientôt en ligne", "projet_suivant": "Projet suivant", "en_savoir_plus": "En savoir plus", "roue_aide": "Faites tourner la roue, cliquez sur une image pour l’agrandir", "fermer": "Fermer", "ouvrir_pdf": "Ouvrir le PDF"}, DATA.textes);
   document.querySelectorAll("[data-t]").forEach((e) => { if (T[e.dataset.t]) e.textContent = T[e.dataset.t]; });
   const INFOS = DATA.infos || {};
   const CATS = [{ id: "tout", label: T.filtre_tout }, ...DATA.categories];
@@ -88,31 +88,25 @@
       : "") +
     cta(esc(T.cta_label), esc(T.cta), "#/contact");
 
-  /* ---------- INDEX : ligne d'images ---------- */
+  /* ---------- INDEX : une image de couverture par projet ---------- */
   const strip = $("#strip");
-  let n = 0;
-  PROJETS.forEach((p) => {
-    const items = p.images && p.images.length ? p.images : [null];
-    items.forEach((im) => {
-      n += 1;
-      const a = el("a", "tile" + (im ? "" : " tile--soon"));
-      a.href = "#/projet/" + p.id;
-      a.dataset.cat = p.categorie;
-      a.style.setProperty("--r", im && im.w && im.h ? (im.w / im.h).toFixed(4) : "0.75");
-      a.style.setProperty("--i", n);
-      a.draggable = false;
-      a.setAttribute("aria-label", `${p.titre} — voir le projet`);
-      a.innerHTML =
-        `<span class="tile__cap"><span class="tile__num">${pad(n)}</span>` +
-        `<span class="tile__title">${esc(p.titre)}</span>` +
-        `<span class="tile__cat">[${esc(catLabel(p.categorie))}]</span></span>` +
-        `<span class="tile__media">` +
-        (im
-          ? `<img src="${IMG}${esc(small(im.src))}" alt="${esc(im.legende || p.titre)}" draggable="false" ${n > 8 ? 'loading="lazy"' : ""}>`
-          : esc(T.a_venir)) +
-        `</span>`;
-      strip.appendChild(a);
-    });
+  const cover = (p) => (p.images || []).find((im) => im.src);
+  PROJETS.forEach((p, n) => {
+    const im = cover(p);
+    const a = el("a", "tile" + (im ? "" : " tile--soon"));
+    a.href = "#/projet/" + p.id;
+    a.dataset.cat = p.categorie;
+    a.style.setProperty("--r", im && im.w && im.h ? (im.w / im.h).toFixed(4) : "0.75");
+    a.style.setProperty("--i", n + 1);
+    a.draggable = false;
+    a.setAttribute("aria-label", `${p.titre} — voir le projet`);
+    a.innerHTML =
+      `<span class="tile__cap"><span class="tile__title">${esc(p.titre)}</span>` +
+      `<span class="tile__cat">[${esc(catLabel(p.categorie))}]</span></span>` +
+      `<span class="tile__media">` +
+      (im ? `<img src="${IMG}${esc(small(im.src))}" alt="${esc(p.titre)}" draggable="false">` : esc(T.a_venir)) +
+      `</span>`;
+    strip.appendChild(a);
   });
   const tiles = $$(".tile", strip);
 
@@ -250,6 +244,7 @@
   const list = $("#list");
   PROJETS.forEach((p, i) => {
     const imgs = p.images || [];
+    const thumbs = imgs.filter((im) => im.src);
     const li = el("li", "row" + (p.aVenir ? " row--soon" : ""));
     li.innerHTML =
       `<a class="row__link" href="#/projet/${p.id}">` +
@@ -257,63 +252,240 @@
       `<span class="row__cat">${esc(catLabel(p.categorie))} — ${esc(p.medium)}</span>` +
       `<span class="row__year">${esc(p.annee)}</span>` +
       `<span class="row__arrow">${p.aVenir ? esc(T.a_venir) : "(" + imgs.length + ")"}</span></a>` +
-      (imgs.length
+      (thumbs.length
         ? `<a class="row__thumbs" href="#/projet/${p.id}" tabindex="-1" aria-hidden="true"><div>` +
-          imgs.map((im) => `<img src="${IMG}${esc(small(im.src))}" width="${im.w}" height="${im.h}" alt="" loading="lazy">`).join("") +
+          thumbs.map((im) => `<img src="${IMG}${esc(small(im.src))}" width="${im.w}" height="${im.h}" alt="" loading="lazy">`).join("") +
           `</div></a>`
         : "");
     list.appendChild(li);
   });
   $("#listCount").textContent = `(${pad(PROJETS.length)}) ${T.compte_projets}`;
 
-  /* ---------- PROJET ---------- */
-  const projectEl = $("#project");
-  const io =
-    "IntersectionObserver" in window
-      ? new IntersectionObserver(
-          (entries) => entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add("is-in"); io.unobserve(en.target); } }),
-          { rootMargin: "0px 0px -8% 0px" }
-        )
-      : null;
+  /* ---------- PROJET : roue d'images ---------- */
+  // Les images (et PDF) d'un projet sont posées sur un cercle dont on voit la moitié haute.
+  // On fait tourner la roue à la molette, au glisser ou aux flèches ; l'image du haut est mise en avant.
+  const wheel = $("#wheel");
+  const wview = $("#view-projet");
+  const info = $("#wheelInfo");
+  const lb = $("#lb");
+  const DEG = Math.PI / 180;
+  const W = { p: null, items: [], els: [], step: 24, full: false, rot: 0, target: 0, active: -1, drag: null, snapT: 0 };
 
   const renderProject = (p) => {
     const idx = PROJETS.indexOf(p);
     const next = PROJETS[(idx + 1) % PROJETS.length];
-    const imgs = p.images || [];
-    const media = imgs.length
-      ? imgs
-          .map((im, i) => {
-            const portrait = im.h > im.w;
-            return (
-              `<figure class="shot reveal${portrait ? " shot--portrait" : ""}">` +
-              `<span class="shot__n">(${i + 1})</span><div class="shot__img">` +
-              `<img src="${IMG}${esc(im.src)}" width="${im.w}" height="${im.h}" alt="${esc(im.legende || p.titre + " — image " + (i + 1))}" ${i ? 'loading="lazy"' : ""}></div>` +
-              (im.legende ? `<figcaption class="shot__cap mono">${esc(im.legende)}</figcaption>` : "") +
-              `</figure>`
-            );
-          })
-          .join("")
-      : `<div class="project__soon mono">${esc(T.bientot)}</div>`;
-
-    projectEl.innerHTML =
-      `<div class="project__side">` +
-      `<a class="project__back mono" href="#/">← ${esc(T.retour)}</a>` +
-      `<h1 class="display project__title${p.titre.length > 12 ? " is-long" : ""}">${esc(p.titre)}</h1>` +
-      `<dl class="project__meta mono">` +
-      `<dt>${esc(T.meta_categorie)}</dt><dd>${esc(catLabel(p.categorie))}</dd>` +
-      (p.annee ? `<dt>${esc(T.meta_annee)}</dt><dd>${esc(p.annee)}</dd>` : "") +
-      (p.medium ? `<dt>${esc(T.meta_medium)}</dt><dd>${esc(p.medium)}</dd>` : "") +
-      `</dl>` +
-      `<p class="project__intro">${esc(p.intro)}</p>` +
-      `<div class="project__text">${(p.texte || []).map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
-      `</div>` +
-      `<div class="project__media">${media}</div>` +
-      `<a class="project__next" href="#/projet/${next.id}"><span class="mono label">${esc(T.projet_suivant)}</span>` +
-      `<span class="display">${esc(next.titre)} <i class="dotr">→</i></span></a>`;
-
-    $$(".reveal", projectEl).forEach((r) => (io ? io.observe(r) : r.classList.add("is-in")));
+    const items = p.images || [];
+    const n = items.length;
+    W.full = n >= 12;
+    W.step = W.full ? 360 / n : 30;
+    // la roue s'ouvre sur l'image du milieu, pour que l'arc soit équilibré
+    const start = W.full ? 0 : Math.floor((n - 1) / 2) * W.step;
+    Object.assign(W, { p, items, rot: start, target: start, active: -1 });
+    wheel.innerHTML = items
+      .map(
+        (im, i) =>
+          `<button type="button" class="wi${im.src ? "" : " wi--blank"}" data-i="${i}" style="--r:${im.w && im.h ? (im.w / im.h).toFixed(4) : 0.75}" ` +
+          `aria-label="${esc(im.legende || `${p.titre}, ${im.pdf ? "document" : "image"} ${i + 1}`)}">` +
+          (im.src ? `<img src="${IMG}${esc(small(im.src))}" alt="" draggable="false">` : `<span>PDF</span>`) +
+          (im.pdf && im.src ? `<i class="wi__tag">PDF</i>` : "") +
+          `</button>`
+      )
+      .join("");
+    W.els = $$(".wi", wheel);
+    const texte = (p.texte || []).filter(Boolean);
+    info.innerHTML =
+      `<p class="mono wheel__cat">${esc(catLabel(p.categorie))}${p.annee ? " — " + esc(p.annee) : ""}</p>` +
+      `<h1 class="wheel__title">${esc(p.titre)}</h1>` +
+      (p.medium ? `<p class="wheel__medium">${esc(p.medium)}</p>` : "") +
+      (p.intro ? `<p class="wheel__intro">${esc(p.intro)}</p>` : "") +
+      (texte.length
+        ? `<div class="wheel__more" hidden>${texte.map((t) => `<p>${esc(t)}</p>`).join("")}</div>` +
+          `<button type="button" class="wheel__toggle" aria-expanded="false">${esc(T.en_savoir_plus)}</button>`
+        : "") +
+      `<p class="wheel__legend" id="wheelLegend" aria-live="polite">${n ? "" : esc(T.bientot)}</p>`;
+    const nx = $("#wheelNext");
+    nx.href = "#/projet/" + next.id;
+    nx.innerHTML = `${esc(T.projet_suivant)}<span class="wheel__nexttitle"> : ${esc(next.titre)}</span> →`;
+    nx.hidden = PROJETS.length < 2;
+    wview.classList.toggle("is-empty", !n);
     document.title = `${p.titre} — ${SITE.nom}`;
   };
+  info.addEventListener("click", (e) => {
+    const b = e.target.closest(".wheel__toggle");
+    if (!b) return;
+    const more = $(".wheel__more", info);
+    more.hidden = !more.hidden;
+    b.setAttribute("aria-expanded", String(!more.hidden));
+  });
+
+  const geom = () => {
+    const w = wheel.clientWidth;
+    const h = wheel.clientHeight;
+    const topH = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--top-h")) || 72;
+    const mobile = w < 700;
+    let R, cy;
+    if (mobile) { R = w * 0.4; cy = topH + 36 + R * 1.3; }
+    else { cy = h * 0.8; R = Math.min(w * 0.34, (cy - topH - 24) / 1.3); }
+    return { R, cy, cx: w / 2, base: R * (mobile ? 0.3 : 0.22), mobile };
+  };
+  const norm = (a) => ((((a + 180) % 360) + 360) % 360) - 180;
+  const clampT = (t) => (W.full ? t : Math.max(0, Math.min((W.items.length - 1) * W.step, t)));
+  const snap = () => { W.target = clampT(Math.round(W.target / W.step) * W.step); };
+  const goTo = (i) => {
+    const n = W.items.length;
+    if (!n) return;
+    let t;
+    if (W.full) {
+      t = i * W.step;
+      t += Math.round((W.target - t) / 360) * 360; // le chemin le plus court
+    } else t = Math.max(0, Math.min(n - 1, i)) * W.step;
+    W.target = clampT(t);
+  };
+
+  const frame = () => {
+    if (document.body.dataset.view === "projet" && W.els.length) {
+      W.rot += (W.target - W.rot) * 0.14;
+      if (Math.abs(W.target - W.rot) < 0.01) W.rot = W.target;
+      const g = geom();
+      wview.style.setProperty("--cy", g.cy + "px");
+      wview.style.setProperty("--R", g.R + "px");
+      wheel.style.setProperty("--b", g.base + "px");
+      W.els.forEach((e, i) => {
+        let a = i * W.step - W.rot;
+        if (W.full) a = norm(a);
+        const d = Math.abs(a);
+        const k = Math.max(0, 1 - d / W.step);
+        const s = 1 + (g.mobile ? 0.75 : 0.95) * k * k * (3 - 2 * k);
+        const x = g.cx + g.R * Math.sin(a * DEG);
+        const y = g.cy - g.R * Math.cos(a * DEG);
+        e.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px) translate(-50%, -50%) rotate(${a.toFixed(2)}deg) scale(${s.toFixed(3)})`;
+        e.style.opacity = d <= 95 ? 1 : Math.max(0, 1 - (d - 95) / 25);
+        e.style.zIndex = 300 - Math.round(d);
+        e.style.visibility = d > 125 ? "hidden" : "";
+      });
+      const n = W.items.length;
+      let ai = Math.round(W.rot / W.step);
+      ai = W.full ? ((ai % n) + n) % n : Math.max(0, Math.min(n - 1, ai));
+      if (ai !== W.active) {
+        W.active = ai;
+        W.els.forEach((e, i) => e.classList.toggle("is-active", i === ai));
+        const lg = $("#wheelLegend");
+        if (lg) lg.textContent = W.items[ai].legende || "";
+      }
+    }
+    requestAnimationFrame(frame);
+  };
+  requestAnimationFrame(frame);
+
+  wview.addEventListener(
+    "wheel",
+    (e) => {
+      if (e.target.closest(".wheel__info") && info.scrollHeight > info.clientHeight) return; // laisse défiler le texte
+      e.preventDefault();
+      const d = (Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX) * (e.deltaMode === 1 ? 32 : 1);
+      W.target = clampT(W.target + d * 0.08);
+      clearTimeout(W.snapT);
+      W.snapT = setTimeout(snap, 180);
+    },
+    { passive: false }
+  );
+  wview.addEventListener("pointerdown", (e) => {
+    if (e.button || e.target.closest("a, .wheel__toggle")) return;
+    W.drag = { x: e.clientX, t: W.target, moved: false, lx: e.clientX, v: 0 };
+  });
+  window.addEventListener("pointermove", (e) => {
+    const d = W.drag;
+    if (!d) return;
+    const dx = e.clientX - d.x;
+    if (!d.moved && Math.abs(dx) > 6) { d.moved = true; wheel.classList.add("is-dragging"); }
+    if (d.moved) {
+      W.target = clampT(d.t - dx / (geom().R * DEG));
+      d.v = e.clientX - d.lx;
+      d.lx = e.clientX;
+    }
+  });
+  const endDrag = () => {
+    const d = W.drag;
+    W.drag = null;
+    if (!d || !d.moved) return;
+    W.target = clampT(W.target - (d.v * 5) / (geom().R * DEG)); // inertie
+    snap();
+    setTimeout(() => wheel.classList.remove("is-dragging"), 0);
+  };
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+  wheel.addEventListener("click", (e) => {
+    if (wheel.classList.contains("is-dragging")) return;
+    const b = e.target.closest(".wi");
+    if (!b) return;
+    const i = +b.dataset.i;
+    if (i === W.active) openLb(i);
+    else goTo(i);
+  });
+
+  /* Agrandissement d'une image ou d'un PDF */
+  const lbMedia = $("#lbMedia");
+  const lbCap = $("#lbCap");
+  let lbI = 0;
+  let lbReturn = null;
+  const openLb = (i) => {
+    const im = W.items[i];
+    if (!im) return;
+    lbI = i;
+    goTo(i);
+    const big = window.innerWidth > 820;
+    if (im.pdf) {
+      const url = IMG + im.pdf;
+      lbMedia.innerHTML = big
+        ? `<iframe src="${esc(url)}#view=FitH" title="${esc(im.legende || W.p.titre)}"></iframe>`
+        : im.src ? `<img src="${IMG}${esc(im.src)}" alt="${esc(im.legende || W.p.titre)}">` : "";
+      lbCap.innerHTML =
+        (im.legende ? `<span>${esc(im.legende)}</span>` : "") +
+        `<a class="lb__open" href="${esc(url)}" target="_blank" rel="noopener">${esc(T.ouvrir_pdf)}</a>`;
+    } else {
+      lbMedia.innerHTML = `<img src="${IMG}${esc(im.src)}" alt="${esc(im.legende || W.p.titre)}">`;
+      lbCap.textContent = im.legende || "";
+    }
+    lb.classList.toggle("is-pdf", !!im.pdf && big);
+    $$(".lb__nav", lb).forEach((b) => (b.style.visibility = W.items.length > 1 ? "" : "hidden"));
+    if (lb.hidden) {
+      lbReturn = document.activeElement;
+      lb.hidden = false;
+      $(".lb__close", lb).focus();
+    }
+  };
+  const closeLb = () => {
+    if (lb.hidden) return;
+    lb.hidden = true;
+    lbMedia.innerHTML = "";
+    if (lbReturn && lbReturn.focus) lbReturn.focus();
+  };
+  const lbGo = (d) => { const n = W.items.length; openLb((lbI + d + n) % n); };
+  lb.addEventListener("click", (e) => {
+    const b = e.target.closest("[data-lb]");
+    if (b) {
+      if (b.dataset.lb === "close") closeLb();
+      else lbGo(b.dataset.lb === "next" ? 1 : -1);
+      return;
+    }
+    if (e.target === lb || e.target.classList.contains("lb__media")) closeLb();
+  });
+  window.addEventListener("keydown", (e) => {
+    if (document.body.dataset.view !== "projet") return;
+    if (!lb.hidden) {
+      if (e.key === "Escape") closeLb();
+      else if (e.key === "ArrowRight") lbGo(1);
+      else if (e.key === "ArrowLeft") lbGo(-1);
+      return;
+    }
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const n = W.items.length;
+      if (!n) return;
+      let i = W.active + (e.key === "ArrowRight" ? 1 : -1);
+      if (W.full) i = (i + n) % n;
+      goTo(i);
+    }
+  });
 
   /* ---------- CONTACT : formulaire ---------- */
   const form = $("#contactForm");
@@ -398,6 +570,7 @@
       a.dataset.nav === view ? a.setAttribute("aria-current", "page") : a.removeAttribute("aria-current")
     );
     cursor.classList.remove("is-on");
+    closeLb();
     setOn(null);
     if (view === "index") { strip.scrollLeft = stripLeft; target = stripLeft; }
     else window.scrollTo(0, 0);
